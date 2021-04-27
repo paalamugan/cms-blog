@@ -40,6 +40,7 @@ docker-compose up -d
 nvm use
 ```
 
+- Install node_modules packages
 ```shell
 npm install && npm run client:install
 ```
