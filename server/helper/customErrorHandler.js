@@ -1,10 +1,11 @@
 'use strict';
 
 const auth   = require('../auth');
+const config = require('../config');
 
 exports.logErrors = function (err, req, res, next) {
     
-    if ((err.status !== 404) && err.stack) {
+    if ((err.status !== 404) && err.stack && config.isDev()) {
         console.error(err.stack);
     }
     next(err);

@@ -36,9 +36,9 @@ module.exports = (app, express, passport) => {
             skip: function (req, res) {
                 return req.path.indexOf('.') !== -1;
             },
-            stream: require('fs').createWriteStream(app.config.logging.apiAccessLog, {
-                flags: 'a'
-            })
+            // stream: require('fs').createWriteStream(app.config.logging.apiAccessLog, {
+            //     flags: 'a'
+            // })
         }));
     };
     

@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { connect } from"react-redux";
- import { BlogLoading, RichTextEditor } from "blog";
+import { BlogLoading, RichTextEditor } from "blog";
+/* eslint-disable no-unused-vars */
 import { Grid, TextField, Typography, Icon, Button } from "@material-ui/core";
 import { addAndEditPost, getPostById } from "app/redux/actions/PostActions";
 import { withRouter } from "react-router";
@@ -48,18 +49,18 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
     setState({ ...state, [event.target.name]: event.target.value });
   }
 
-  const handleInputImage = (event) => {
+  // const handleInputImage = (event) => {
 
-    let file = event.target.files[0];
+  //   let file = event.target.files[0];
 
-    if (file && file.type && !file.type.includes('image')) {
-      snackBarRef.current.open({ message: "Only supported image format(jpg, png, svg)." });
-      file = null;
-    }
+  //   if (file && file.type && !file.type.includes('image')) {
+  //     snackBarRef.current.open({ message: "Only supported image format(jpg, png, svg)." });
+  //     file = null;
+  //   }
 
-    setState({ ...state, image: file });
+  //   setState({ ...state, image: file });
 
-  }
+  // }
 
   const onSubmit = (status) => {
     return (event) => {
@@ -131,7 +132,7 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
                     size="small" />
                 </div>
               </Grid>
-              <Grid item xs={12} md={8} lg={6}>
+              {/* <Grid item xs={12} md={8} lg={6}>
                 <div className="mb-3">
                   <Typography 
                     variant="subtitle1" 
@@ -142,11 +143,11 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
                     <input accept="image/*" name="image" id="image" type="file" autoComplete="off" tabIndex="-1" className="hidden" onChange={handleInputImage} />
                     <div className="flex-column items-center">
                       <Icon className="text-muted text-48">publish</Icon>
-                      <span>{ !!state.image || !!state.imageUrl ? '1 image were selected' : 'Drop your post image' }</span>
+                      <span>{ !!state.image || !!state.imageUrl ? '1 image were selected' : 'Upload your post image' }</span>
                     </div>
                   </label>
                 </div>
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <div className="mb-3">
                   <Typography 
