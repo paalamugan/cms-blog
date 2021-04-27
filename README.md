@@ -5,6 +5,7 @@
 ## GET STARTED
 
 **Default Login credentials**
+
 username - `admin`
 password - `admin`
 
