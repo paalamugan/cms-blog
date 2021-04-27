@@ -1,8 +1,8 @@
-# CMS Blog
+# CMS BLOG
 
 - It helps to create authenticate blog posts, and users can also comments the specific posts.
 
-## GET STARTED
+## Get Started
 
 **Default Login credentials**
 
