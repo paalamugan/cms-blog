@@ -5,8 +5,8 @@
 ## GET STARTED
 
 **Default Login credentials**
-- username - `admin`
-- password - `admin`
+username - `admin`
+password - `admin`
 
 **One Time Only in Linux OS**
 
@@ -22,7 +22,7 @@ sudo systemctl start mongod
 
 *Alternative*
 
-- If you have docker machine, run below command to start a mongodb start
+- If you have docker machine, run below command to start a mongodb server
 ```shell
 docker-compose up -d
 ```
