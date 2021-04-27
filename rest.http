@@ -1,0 +1,46 @@
+### login
+POST http://localhost:8000/auth/login
+content-type: application/json
+
+{
+    "username": "paalamugan10",
+    "password": "paalamugan"
+}
+
+### users list
+GET http://localhost:8000/api/users
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ.eyJzdWIiOiI2MDgxZTVjYjFmMDY3ZGRlZmJiODdhOTAiLCJpYXQiOjE2MTkxMjg1MTc5MTYsImV4cCI6MTYxOTEyODYwNDMxNn0.6LYJhAUdRIR3Z3cn_ZLM9opY9hKyB9f551BaRchzXN8
+
+### users create
+POST http://localhost:8000/api/users
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDgxZTRiMjFmMDY3ZGRlZmJiODdhOGYiLCJpYXQiOjE2MTkxMjU2Njg0NDcsImV4cCI6MTYxOTEyNTc1NDg0N30.sG0izgRDM9OZ66Z2eQ5ATeCcHmwtsDMIbiL66lmjmaY
+
+{
+    "username": "paalamugan",
+    "password": "paalamugan"
+}
+
+### users get
+GET http://localhost:8000/api/users/6081dda44060eecd0d50f2f5
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDgxZTRiMjFmMDY3ZGRlZmJiODdhOGYiLCJpYXQiOjE2MTkxMjU2Njg0NDcsImV4cCI6MTYxOTEyNTc1NDg0N30.sG0izgRDM9OZ66Z2eQ5ATeCcHmwtsDMIbiL66lmjmaY
+
+### users update
+PUT http://localhost:8000/api/users/6081dda44060eecd0d50f2f5
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDgxZTRiMjFmMDY3ZGRlZmJiODdhOGYiLCJpYXQiOjE2MTkxMjU2Njg0NDcsImV4cCI6MTYxOTEyNTc1NDg0N30.sG0izgRDM9OZ66Z2eQ5ATeCcHmwtsDMIbiL66lmjmaY
+
+{
+    "username": "paalamugan"
+}
+
+### users delete
+DELETE http://localhost:8000/api/users/6081dda44060eecd0d50f2f5
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDgxZTRiMjFmMDY3ZGRlZmJiODdhOGYiLCJpYXQiOjE2MTkxMjU2Njg0NDcsImV4cCI6MTYxOTEyNTc1NDg0N30.sG0izgRDM9OZ66Z2eQ5ATeCcHmwtsDMIbiL66lmjmaY
+
+### Logout
+GET http://localhost:8000/auth/logout
+content-type: application/json

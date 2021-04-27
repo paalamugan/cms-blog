@@ -1,0 +1,9 @@
+mongo:
+  image: mongo:4.4
+  container_name: "mongodb"
+  volumes:
+    - ./data/mongodb:/data/db
+  ports:
+    - "0.0.0.0:27017:27017"
+  expose:
+    - "27017"

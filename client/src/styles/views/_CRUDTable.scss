@@ -1,0 +1,27 @@
+.crud-table {
+  thead {
+    tr {
+      th:first-child {
+        padding: 15px 30px !important;
+      }
+    }
+  }
+  tbody {
+    tr {
+      transition: "background 300ms ease";
+      &:hover {
+        background: $light-gray;
+      }
+      // td {
+      //   // border-bottom: none;
+      //   // text-transform: capitalize;
+      // }
+      td:first-child {
+        padding: 12px 30px !important;
+      }
+    }
+  }
+  &.table-auto {
+    table-layout: auto;
+  }
+}
