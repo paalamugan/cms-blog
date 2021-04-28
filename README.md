@@ -35,7 +35,7 @@ docker-compose up -d
 
 ## Install Dependencies
 
-- If you have nvm package, just use below command
+- If you have nvm package, just use below command to switch node engine
 ```shell
 nvm use
 ```
