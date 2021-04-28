@@ -78,10 +78,13 @@ npm run dev
 npm run server
 ```
 
+- After run the backend server click this link [http://localhost:8000](http://localhost:8000)
+
 - For client(Run only in frontend)
 ```shell
 npm run client
 ```
+- After run the frontend app click this link [http://localhost:3000](http://localhost:3000)
 
 ## Production
 
@@ -90,4 +93,4 @@ npm run client
 npm run prod
 ```
 
-- After run the server click this link [http://localhost:8000](http://localhost:8000)
+- After run the production server click this link [http://localhost:8000](http://localhost:8000)
