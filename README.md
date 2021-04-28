@@ -51,7 +51,7 @@ npm install && npm run client:install
 cp -rf .env-example .env
 ```
 
-**After that you have to replace your environment variable in `.env` file.**
+**After that you have to replace your environment variable inside `.env` file.**
 
 - `.env` file look like this,
 
