@@ -68,7 +68,7 @@ GOOGLE_CLIENT_ID=<Your google client id>(Optional)
 GOOGLE_CLIENT_SECRET=<Your google client secret key>(Optional)
 ```
 
-- If you start a both backend and frontend simultaneously, use below command
+- If you want to start a both backend and frontend simultaneously in single command, use below command
 ```shell
 npm run dev
 ```
@@ -78,13 +78,12 @@ npm run dev
 npm run server
 ```
 
-- After run the backend server click this link [http://localhost:8000](http://localhost:8000)
-
 - For client(Run only in frontend)
 ```shell
 npm run client
 ```
-- After run the frontend app click this link [http://localhost:3000](http://localhost:3000)
+
+- After run the both frontend and backend click this link [http://localhost:3000](http://localhost:3000) to view.
 
 ## Production
 
@@ -93,4 +92,4 @@ npm run client
 npm run prod
 ```
 
-- After run the production server click this link [http://localhost:8000](http://localhost:8000)
+- After run the production server click this link [http://localhost:8000](http://localhost:8000) to view.
