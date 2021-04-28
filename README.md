@@ -89,3 +89,5 @@ npm run client
 ```shell
 npm run prod
 ```
+
+- After run the server click this link [http://localhost:8000](http://localhost:8000)
