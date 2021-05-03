@@ -7,7 +7,7 @@
         "client:install": "cd client && npm install",
         "client": "cd client && npm run start",
         "build": "cd client && npm run build",
-        "heroku-postbuild": "npm run client:install",
+        "heroku-postbuild": "npm run client:install && npm run build",
         "server": "NODE_ENV=development nodemon server/app.js",
         "prod": "NODE_ENV=production node server/app.js",
         "dev": "concurrently -n 'server, client' -c 'red, green' \"npm run server\" \"npm run client\""
