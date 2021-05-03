@@ -12,14 +12,14 @@ var ReplaySchema = new Schema({
         required: true
     },
 
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
         required: true,
         index: true,
         ref: 'User'
     },
 
-    postId: {
+    post: {
         type: Schema.Types.ObjectId,
         required: true,
         index: true,
@@ -32,7 +32,7 @@ var ReplaySchema = new Schema({
         ref: 'Comment'
     }
     
-});
+}, { versionKey: false });
 
 ReplaySchema.plugin(CreateUpdatedAt);
 

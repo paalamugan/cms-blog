@@ -12,5 +12,9 @@ module.exports = {
     googleAuth: {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    },
+    awsS3: {
+        accessKeyId: process.env.S3_ACCESS_KEY,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
     }
 }

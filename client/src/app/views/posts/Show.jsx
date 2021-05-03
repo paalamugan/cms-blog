@@ -1,19 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Typography, TextField, Button, Icon } from "@material-ui/core";
+import moment from "moment";
+import { 
+  Grid, 
+  Typography, 
+  TextField, 
+  Button, 
+  Icon,
+  Divider 
+} from "@material-ui/core";
 import PropTypes from 'prop-types';
 import { getPostBySlug } from "app/redux/actions/PostActions";
 import { addAndEditComment } from "app/redux/actions/CommentActions";
 import { connect } from "react-redux";
 import { BlogCustomizedSnackbar, BlogNoData, BlogLoading } from "blog";
-import moment from "moment";
+import CommentList from "./shared/CommentList";
+import { authRoles } from "app/auth/authRoles";
 
-const Show = ({ getPostBySlug, addAndEditComment, comments, match: { params: { slug }} }) => {
+const Show = ({ role, getPostBySlug, addAndEditComment, match: { params: { slug }} }) => {
 
   const [state, setState] = useState({});
   const [loading, setLoading] = useState(true);
-  const snackBarRef = useRef(null);
+  const snackBarRef = useRef();
   const [comment, setComment] = useState('');
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     setLoading(true);
     getPostBySlug(slug).then(({ success, data }) => {
@@ -24,16 +34,24 @@ const Show = ({ getPostBySlug, addAndEditComment, comments, match: { params: { s
       setState(data);
       setLoading(false);
     })
-  }, [getPostBySlug, slug]);
+  }, []);
 
   const handleSubmit = () => {
-    addAndEditComment({ message: comment, postId: state._id })
+    addAndEditComment({ message: comment, post: state._id })
     .then(({ success, data }) => {
 
       if (!success) {
-        snackBarRef.current.open({ message: data });
-        return;
+        return snackBarRef.current.open({ message: data });
       }
+
+      if (!authRoles.admin.includes(role)) {
+        return snackBarRef.current.open({ variant: 'success', message: 'Comments was successfully sent. But Admin has to be approve your comment!' });
+      }
+
+      setState({
+        ...state,
+        comments: [data, ...state.comments]
+      });
 
       setComment('');
 
@@ -53,7 +71,7 @@ const Show = ({ getPostBySlug, addAndEditComment, comments, match: { params: { s
                 </div>
                 <p className="text-bold font-18">Post Created at: <i><b>{moment(state.createdAt).format('MMM DD, YYYY')}</b></i></p>
                 <Grid item xs>
-                  <img src={state.imageUrl} alt={state.title} className="post-image" />
+                  <img src={state.imageUrl || state.defaultImageUrl} alt={state.title} className="post-image" />
                 </Grid>
                 <Grid item xs className="mb-10">
                   <Typography className="mt-5" gutterBottom variant="h5" component="h2" >
@@ -93,6 +111,8 @@ const Show = ({ getPostBySlug, addAndEditComment, comments, match: { params: { s
                     </Button>
                   </div>
                 </Grid>
+                <Divider className="mt-6 mb-5" />
+                <CommentList comments={state.comments} />
               </Grid>
             </Grid>
           ) : (<BlogNoData />)
@@ -103,9 +123,9 @@ const Show = ({ getPostBySlug, addAndEditComment, comments, match: { params: { s
 }
 
 const mapStateToProps = state => ({
+  role: state.session.role,
   getPostBySlug: PropTypes.func.isRequired,
-  addAndEditComment: PropTypes.func.isRequired,
-  comments: state.comment.lists
+  addAndEditComment: PropTypes.func.isRequired
 })
 
 export default connect(mapStateToProps, { getPostBySlug, addAndEditComment })(Show);

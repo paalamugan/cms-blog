@@ -1,12 +1,13 @@
 'use strict'
 
-const _               = require('lodash');
-const mongoose        = require('mongoose');
-const slug            = require('mongoose-slug-updater');
-const CreateUpdatedAt = require('mongoose-timestamp');
-const bcrypt          = require('bcrypt');
-const validator       = require('validator');
-const { ROLES } = require('../common');
+const _                = require('lodash');
+const mongoose         = require('mongoose');
+const slug             = require('mongoose-slug-updater');
+const CreateUpdatedAt  = require('mongoose-timestamp');
+const bcrypt           = require('bcrypt');
+const validator        = require('validator');
+const { ROLES }        = require('../common');
+const { getAdminUser } = require('../auth/admin');
 
 var UserSchema = new mongoose.Schema({
 
@@ -47,7 +48,8 @@ var UserSchema = new mongoose.Schema({
     },
 
     avatarUrl: {
-        type: String
+        type: String,
+        default: '/assets/images/avatar.png'
     },
 
     provider: {
@@ -63,7 +65,7 @@ var UserSchema = new mongoose.Schema({
 
     // slug: { type: String, slug: ['firstName', 'lastName'], unique: true } 
 
-});
+}, { versionKey: false });
 
 // UserSchema.plugin(slug);
 UserSchema.plugin(CreateUpdatedAt);

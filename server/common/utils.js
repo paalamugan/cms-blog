@@ -1,5 +1,8 @@
 "use strict";
 
+const fs              = require('fs');
+const path            = require('path');
+const { Readable }    = require('stream');
 const jwt             = require('jsonwebtoken');
 const crypto          = require('crypto');
 
@@ -7,7 +10,7 @@ const createDOMPurify = require('dompurify');
 const { JSDOM }       = require('jsdom');
 const dompurify       = createDOMPurify(new JSDOM().window);
 
-const { jwtSecretKey } = require('../config');
+const { jwtSecretKey, getS3UploadStream } = require('../config');
 
 exports.generateJwtToken = (user) => {
 
@@ -43,8 +46,54 @@ exports.getSessionUser = (user = {}) => {
     let obj = {
         username: user.username, 
         role: user.role,
-        avatarUrl: user.avatarUrl || `https://www.gravatar.com/avatar/${user.gravatarHash}?d=mm&r=pg&s=128`  
+        avatarUrl: user.avatarUrl // 'https://www.gravatar.com/avatar/1234578803?d=mm&r=pg&s=128'  
     }
 
     return obj;        
+}
+
+const bufferToStream = exports.bufferToStream = (buffer) => {
+    return new Readable({
+        read() {
+            this.push(buffer);
+            this.push(null);
+        }
+    });
+
+}
+
+exports.uploadImageToS3 = (options = {}, callback) => {
+
+    let fileStream;
+    let { file, bucketName = 'cms-blog-image', Key } = options;
+
+    if (!file || (!file.buffer && !file.path)) {
+        return callback();
+    }
+
+    Key = Key ? Key : 'uploads/' + ('10000' + parseInt(Math.random() * 10000000) + path.extname(file.originalname));
+
+    if (file.buffer) {
+        fileStream = bufferToStream(file.buffer);
+    } else if (file.path) {
+        fileStream = fs.createReadStream(file.path);
+    }
+
+    if (!fileStream) {
+        return callback();
+    }
+
+    const s3Options = {
+        Bucket: bucketName,
+        Key: Key,
+        ACL: 'public-read', // avaliable options private, public-read, public-read-write, authenticated-read, aws-exec-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write
+        ContentEncoding: 'gzip', // compress and zip it with minimum size
+        ContentType: 'application/octet-stream', // force download if it's accessed as a top location
+        ContentDisposition: "attachment", // forces the browser to download the uploaded file instead of trying to open it.
+    }
+
+    const uploadStream = getS3UploadStream(s3Options, callback);
+
+    // Pipe the incoming filestream through compression, and upload to S3.
+    fileStream.pipe(uploadStream);
 }

@@ -1,4 +1,5 @@
 const { Comment } = require('../models');
+const { ROLES, COMMENT_STATUS } = require("../common")
 
 exports.list = (req, res, next) => {
 
@@ -32,7 +33,8 @@ exports.get = (req, res, next) => {
 exports.create = (req, res, next) => {
 
     let body = req.body;
-    body.userId = req.user._id;
+    body.user = req.user._id;
+    body.status = req.user.role === ROLES.ADMIN ? COMMENT_STATUS.APPROVED : COMMENT_STATUS.PENDING;
     
     Comment.create(body, (err, comment) => {
         

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from"react-redux";
 import { BlogLoading, RichTextEditor } from "blog";
@@ -15,31 +15,27 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
 
   const snackBarRef = useRef();
 
-  const getSinglePost = useCallback((id) => {
-
-    setLoading(true);
+  /* eslint-disable react-hooks/exhaustive-deps */
+  useEffect(() => {
 
     if (!id) {
-      setLoading(false);
-      return;
+      return setLoading(false);
     }
+
+    setLoading(true);
 
     getPostById(id).then(({ success, data }) => {
 
       if (!success) {
-        snackBarRef.current.open({ message: data });
-        data = null;
+        return snackBarRef.current.open({ message: data });
       }
 
       setState({ ...data });
       setLoading(false);
+
     });
 
-  }, [getPostById]);
-
-  useEffect(() => {
-    getSinglePost(id);
-  }, [getSinglePost, id]);
+  }, []);
 
   const handleContentChange = contentHtml => {
     setState({ ...state, content: contentHtml });
@@ -49,18 +45,18 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
     setState({ ...state, [event.target.name]: event.target.value });
   }
 
-  // const handleInputImage = (event) => {
+  const handleInputImage = (event) => {
 
-  //   let file = event.target.files[0];
+    let file = event.target.files[0];
 
-  //   if (file && file.type && !file.type.includes('image')) {
-  //     snackBarRef.current.open({ message: "Only supported image format(jpg, png, svg)." });
-  //     file = null;
-  //   }
+    if (file && file.type && !file.type.includes('image')) {
+      snackBarRef.current.open({ message: "Only supported image format(jpg, png, svg)." });
+      file = null;
+    }
 
-  //   setState({ ...state, image: file });
+    setState({ ...state, image: file });
 
-  // }
+  }
 
   const onSubmit = (status) => {
     return (event) => {
@@ -72,8 +68,7 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
         .then(({ success, data }) => {
 
           if(!success) {
-            snackBarRef.current.open({ message: data });
-            return;
+            return snackBarRef.current.open({ message: data });
           }
 
           history.push({
@@ -88,7 +83,7 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
   return (
     <>
       <BlogCustomizedSnackbar ref={snackBarRef} />
-      <form name="form" className="p-4" autoComplete="off">
+      <form name="form" className="p-4 min-h-300" autoComplete="off">
         {loading ? <BlogLoading /> :
           (
             <Grid container spacing={1} direction="column" >
@@ -132,7 +127,7 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
                     size="small" />
                 </div>
               </Grid>
-              {/* <Grid item xs={12} md={8} lg={6}>
+              <Grid item xs={12} md={8} lg={6}>
                 <div className="mb-3">
                   <Typography 
                     variant="subtitle1" 
@@ -143,11 +138,11 @@ const PostForm = ({ addAndEditPost, getPostById, id, history }) => {
                     <input accept="image/*" name="image" id="image" type="file" autoComplete="off" tabIndex="-1" className="hidden" onChange={handleInputImage} />
                     <div className="flex-column items-center">
                       <Icon className="text-muted text-48">publish</Icon>
-                      <span>{ !!state.image || !!state.imageUrl ? '1 image were selected' : 'Upload your post image' }</span>
+                      <span>{ !!state.image || !!state.imageUrl ? '1 post image were selected' : 'Upload your post image' }</span>
                     </div>
                   </label>
                 </div>
-              </Grid> */}
+              </Grid>
               <Grid item xs={12}>
                 <div className="mb-3">
                   <Typography 

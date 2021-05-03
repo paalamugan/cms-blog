@@ -16,7 +16,7 @@ import { deleteUser } from "app/redux/actions/UserActions";
 import { ConfirmationDialog } from "blog";
 import { isAdmin } from "app/constant";
 
-const UserTable = ({ users, session, snackBarRef, andAndEditDialogRef, deleteUser }) => {
+const UserTable = ({ users, session, snackBarRef, addAndEditDialogRef, deleteUser }) => {
 
   const [deleteSelectedId, setDeleteSelectedId] = useState(null);
 
@@ -60,7 +60,7 @@ const UserTable = ({ users, session, snackBarRef, andAndEditDialogRef, deleteUse
           {users.map((user, index) => (
             <TableRow key={index}>
               <TableCell width={50} align="left">
-                <Avatar src={user.avatarUrl || `https://www.gravatar.com/avatar/${user.gravatarHash || index}?d=mm&r=pg&s=128`}></Avatar>
+                <Avatar src={user.avatarUrl || '/assets/images/avatar.png'}></Avatar>
               </TableCell>
               <TableCell width={200} align="left">
                 {user.username}
@@ -78,7 +78,7 @@ const UserTable = ({ users, session, snackBarRef, andAndEditDialogRef, deleteUse
                 isAdmin(session.role) ? 
                 (
                   <TableCell className="px-0" align="center">
-                    <IconButton onClick={() => andAndEditDialogRef.current.open(user)}>
+                    <IconButton onClick={() => addAndEditDialogRef.current.open(user)}>
                       <Icon color="primary">edit</Icon>
                     </IconButton>
                     <IconButton onClick={() => setDeleteSelectedId(user._id)}>

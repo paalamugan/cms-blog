@@ -16,11 +16,11 @@ export const getAllComment = () => dispatch => {
   });
 };
 
-export const addAndEditComment = ({ _id, message, postId, status }) => dispatch => {
+export const addAndEditComment = ({ _id, message, post, status }) => dispatch => {
 
   let method = _id ? "put" : "post";
 
-  return api[method](`/comments${_id ? `/${_id}` : ''}`, { message, status, postId }).then(res => {
+  return api[method](`/comments${_id ? `/${_id}` : ''}`, { message, status, post }).then(res => {
 
     if(!res.success) {
       return res;

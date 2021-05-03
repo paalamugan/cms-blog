@@ -9,7 +9,6 @@ exports.list = (req, res, next) => {
         if (err) {
             return next(err);
         }
-        
         res.json(posts);
     });
 }
@@ -37,12 +36,12 @@ exports.slug = (req, res, next) => {
         return next(new Error("slug is missing"));
     }
 
-    Post.findOne({ slug: slug }).exec((err, post) => {
+    Post.findBySlug(slug, (err, post) => {
 
         if (err) {
             return next(err);
         }
-        
+
         res.json(post);
     })
 }
@@ -50,14 +49,14 @@ exports.slug = (req, res, next) => {
 exports.create = (req, res, next) => {
 
     let body = req.body;
-    body.userId = req.user._id;
+    body.user = req.user._id;
     
     Post.create(body, (err, post) => {
         
         if (err) {
             return next(err);
         }
-
+        
         res.json(post);
     });
 
@@ -85,7 +84,7 @@ exports.delete = (req, res, next) => {
 
     Post.findByIdAndDelete(id).exec()
     .then(() => {
-        return Comment.deleteMany({ postId: id }).exec();
+        return Comment.deleteMany({ post: id }).exec();
     })
     .then(() => {
         return res.json({});

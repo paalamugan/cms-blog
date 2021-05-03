@@ -5,7 +5,13 @@ const Schema             = mongoose.Schema;
 const CreateUpdatedAt    = require('mongoose-timestamp');
 const { COMMENT_STATUS, sanitizeHtml } = require('../common');
 
-var CommentSchema = new Schema({
+const schemaOptions = {
+    toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+    toObject: { virtuals: true }, // So `toObject()` output includes virtuals,
+    versionKey: false // hide __v property
+}
+
+const CommentSchema = new Schema({
 
     message: {
         type: String,
@@ -22,30 +28,38 @@ var CommentSchema = new Schema({
         "default": COMMENT_STATUS.PENDING
     },
 
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
         required: true,
         index: true,
         ref: 'User'
     },
 
-    postId: {
+    post: {
         type: Schema.Types.ObjectId,
         required: true,
         index: true,
         ref: 'Post'
     }
 
-});
+}, schemaOptions);
 
 CommentSchema.plugin(CreateUpdatedAt);
 
-CommentSchema.pre('validate', function (next) {
+CommentSchema.pre('validate', function(next) {
 
     this.message = sanitizeHtml(this.message);
 
     next();
 });
+
+CommentSchema.post('save', function(doc, next) {
+    doc.populate('user', 'username avatarUrl -_id')
+    .execPopulate()
+    .then(function() {
+        next();
+    });
+})
 
 CommentSchema.statics.get = function(id, cb) {
     this.findById(id).exec(cb);
@@ -59,9 +73,19 @@ CommentSchema.statics.list = function(options, cb) {
             status: -1,
             createdAt: -1
         })
-        .populate('postId', 'title')
-        .populate('userId', 'username')
+        .populate('post', 'title')
+        .populate('user', 'username')
         .exec(cb);
 };
+
+CommentSchema.statics.getPostComments = function(post, cb) {
+    this.find({ post: post, status: COMMENT_STATUS.APPROVED })
+        .sort({
+            createdAt: -1
+        })
+        .populate('user', 'username avatarUrl -_id')
+        .select({ status: 0, post: 0 })
+        .exec(cb);
+}
 
 module.exports = mongoose.model('Comment', CommentSchema);

@@ -13,21 +13,16 @@ import { ConfirmationDialog } from "blog";
 
 const CommentCard = ({ 
   comments,
-  _id, 
-  message, 
-  status, 
-  postId: post,
-  userId: user,   
+  comment,   
   snackBarRef, 
   addAndEditComment, 
   deleteComment }) => {
 
-  post = post || {};
-  user = user || {};
+  const {_id, message, status, post = {}, user = {} } = comment;
 
   const [deleteSelectedId, setDeleteSelectedId] = useState(null);
 
-  const getSubmitType = (status) => (status === "delete") ? deleteComment({ _id, postId: post._id }) : addAndEditComment({ _id, status, postId: post._id });
+  const getSubmitType = (status) => (status === "delete") ? deleteComment({ _id, post: post?._id }) : addAndEditComment({ _id, status, post: post?._id });
 
   const onSubmit = (status) => {
     return (event) => {
@@ -62,7 +57,7 @@ const CommentCard = ({
     <ConfirmationDialog 
       open={!!deleteSelectedId} 
       title="Delete Confirm" 
-      text="Are you sure you want to delete this post? This cannot be undone."
+      text="Are you sure you want to delete this comment? This cannot be undone."
       onYesClick={onConfirmDelete}
       onConfirmDialogClose={() => setDeleteSelectedId(null)} />
 
@@ -71,7 +66,7 @@ const CommentCard = ({
         <div className="comment-title">
           <div className="mb-2 flex items-center">
             <div className="font-bold text-20 mr-2">
-              {post.title}
+              {post?.title}
             </div>
             <Chip label={status} size="small" />
             <div className="ml-3 text-14 text-muted">Created by <b>{ user?.username || 'admin'}</b></div>

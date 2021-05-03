@@ -48,6 +48,13 @@ module.exports = (app, express, passport) => {
     app.use(express.json());
     
     app.use(multer({
+        fileFilter: (req, file, cb) => {
+            if (/^image\/(jpe?g|png|gif)$/i.test(file.mimetype)) {
+                cb(null, true);
+            } else {
+                cb(new Error("Invalid file type, only JPEG, PNG and GIF is allowed!"), false);
+            }
+        },
         limits: {
           fileSize: 52428800, // max file size (in bytes) 50 MB
           files: 1  // max number of file fields
@@ -68,7 +75,7 @@ module.exports = (app, express, passport) => {
         },
         store: MongoStore.create({
             mongoUrl: app.config.mongodb.url,
-            ttl: 1 * 24 * 60 * 60 // 2 days
+            ttl: 1 * 24 * 60 * 60 // 1 days
         })
     }));
 

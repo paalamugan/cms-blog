@@ -42,6 +42,13 @@ h6,
   background: #eae8e8
 }
 
+.card-post-image {
+  .MuiCardMedia-img {
+    object-fit: fill;
+    background-color: #f5f5f5;
+  }
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

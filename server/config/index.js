@@ -22,6 +22,10 @@ config.isProd = function () {
     return (this.env === "production");
 }
 
+config.isAWS = function () {
+    return !!this.awsS3.accessKeyId;
+}
+
 config.isFacebookOAuth = !!(config.facebookAuth.clientID && config.facebookAuth.clientSecret);
 config.isGoogleOAuth = !!(config.googleAuth.clientID && config.googleAuth.clientSecret);
 

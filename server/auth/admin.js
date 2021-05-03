@@ -3,11 +3,11 @@ const { adminCredentials } = require('../config');
 const { ROLES, generateHash } = require('../common');
 
 const adminUser = {
-    _id: mongoose.Types.ObjectId().toString(),
+    _id: '608ec3854814b740ea937c57' || mongoose.Types.ObjectId().toString(),
     username: adminCredentials.username,
     password: adminCredentials.password,
     role: ROLES.ADMIN,
-    gravatarHash: generateHash(adminCredentials.username)
+    avatarUrl: '/assets/images/avatar.png'
 };
 
 exports.isAdminUser = (username) => {

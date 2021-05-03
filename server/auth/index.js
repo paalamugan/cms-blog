@@ -1,7 +1,6 @@
-const passport = require('passport');
-const authModule = require('./auth-module');
-const admin = require('./admin');
-const { User } = require('../models');
+const authModule            = require('./auth-module');
+const admin                 = require('./admin');
+const { User }              = require('../models');
 const { COOKIE_TOKEN_NAME } = require('../common');
 
 exports.authModule = authModule;
@@ -17,7 +16,7 @@ exports.isAuthenticated = (req, res, next) => {
     }
 
     let authorization = req.headers.authorization;
-
+   
     if (authorization) {
         return authModule.authenticateJwt(req, res, next);
     }

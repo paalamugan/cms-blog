@@ -68,10 +68,10 @@ exports.delete = (req, res, next) => {
 
     User.findByIdAndDelete(id).exec()
     .then(() => {
-        return Post.deleteMany({ userId: id }).exec();
+        return Post.deleteMany({ user: id }).exec();
     })
     .then(() => {
-        return Comment.deleteMany({ userId: id }).exec();
+        return Comment.deleteMany({ user: id }).exec();
     })
     .then(() => {
         return res.json({});

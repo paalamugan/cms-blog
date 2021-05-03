@@ -1,9 +1,10 @@
-const express = require('express');
-const Router = express.Router();
-const { getParamsValidation } = require('../helper/customValidation');
-const { User, Post, Comment } = require('../controllers');
-const { authenticateRole, authModule } = require('../auth');
+const express                   = require('express');
+const Router                    = express.Router();
+const { getParamsValidation }   = require('../helper/customValidation');
+const { User, Post, Comment }   = require('../controllers');
 const { ROLES, getSessionUser } = require('../common');
+const { uploadPostImage }       = require('../helper/uploadImage');
+const { authenticateRole, authModule } = require('../auth');
 
 const getCurrentSession = (req, res, next) => {
 
@@ -42,12 +43,12 @@ Router
     .get('/posts', Post.list)
     .get('/posts/slug/:slug', Post.slug)
     
-    .post('/posts', authenticateRole(ROLES.ADMIN),  Post.create)
+    .post('/posts', authenticateRole(ROLES.ADMIN), uploadPostImage, Post.create)
     
     .all('/posts/*', authenticateRole(ROLES.ADMIN))
     .all('/posts/:id', getParamsValidation)
     .get('/posts/:id', Post.get)
-    .put('/posts/:id', Post.update)
+    .put('/posts/:id', uploadPostImage, Post.update)
     .delete('/posts/:id', Post.delete)
 
 // Comments

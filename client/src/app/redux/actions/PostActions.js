@@ -20,7 +20,16 @@ export const getAllPost = () => dispatch => {
 export const addAndEditPost = ({ _id, title, description, content, image, status }) => dispatch => {
 
   let method = _id ? "put" : "post";
-  return api[method](`/posts${_id ? `/${_id}` : ''}`, { title, description, content, image, status });
+
+  let form = new FormData();
+  
+  form.append('title', title);
+  form.append('description', description);
+  form.append('content', content);
+  form.append('image', image);
+  form.append('status', status);
+
+  return api[method](`/posts${_id ? `/${_id}` : ''}`, form);
 
 };
 

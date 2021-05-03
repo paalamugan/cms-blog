@@ -6,12 +6,19 @@ const Schema           = mongoose.Schema;
 const slug             = require('mongoose-slug-updater');
 const CreateUpdatedAt  = require('mongoose-timestamp');
 const marked           = require('marked');
+const { COMMENT_STATUS } = require('../common');
 const { CATEGORIES, 
         VISIBILITY, 
         POST_STATUS,
         sanitizeHtml } = require(global.rootPath + '/common');
 
-var PostSchema = new Schema({
+const schemaOptions = {
+    toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+    toObject: { virtuals: true }, // So `toObject()` output includes virtuals,
+    versionKey: false // hide __v property
+}
+    
+const PostSchema = new Schema({
 
     title: {
         type: String,
@@ -27,13 +34,17 @@ var PostSchema = new Schema({
         required: true
     },
 
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
     
     imageUrl: {
+        type: String
+    },
+
+    defaultImageUrl: {
         type: String,
         default: "/assets/images/default-post.jpg"
     },
@@ -86,7 +97,7 @@ var PostSchema = new Schema({
         unique: true 
     }
 
-});
+}, schemaOptions);
 
 PostSchema.plugin(slug);
 PostSchema.plugin(CreateUpdatedAt);
@@ -102,6 +113,16 @@ PostSchema.pre('validate', function (next) {
     next();
 });
 
+PostSchema.virtual('comments', {
+    ref: 'Comment', // The model to use
+    localField: '_id', // Find post where `localField`
+    foreignField: 'post', // is equal to `foreignField`
+    justOne: false,  // If `justOne` is true, 'comments' will be a single doc as opposed to an array. `justOne` is false by default.
+    options: { sort: { createdAt: -1 } }, // Query options, see http://bit.ly/mongoose-query-options
+    match: { status: COMMENT_STATUS.APPROVED },
+    // count: true // And only get the number of docs
+})
+
 PostSchema.methods.isDraft = function() {
     return this.status === POST_STATUS.DRAFT;
 }
@@ -113,7 +134,15 @@ PostSchema.statics.get = function(id, cb) {
 PostSchema.statics.findBySlug = function(slug, cb) {
     this.findOne({
         slug: slug
-    }, cb);
+    })
+    .populate({
+        path: 'comments', 
+        select: 'message user createdAt -post',
+        populate: {
+            path: 'user'
+        } 
+    })
+    .exec(cb);
 }
 
 PostSchema.statics.list = function(options, cb) {

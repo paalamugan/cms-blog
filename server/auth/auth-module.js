@@ -1,7 +1,7 @@
 const validator = require('validator');
 const passport = require('passport');
 const { User } = require('../models');
-const { COOKIE_TOKEN_NAME, generateHash } = require('../common');
+const { COOKIE_TOKEN_NAME, ROLES } = require('../common');
 const { isAdminUser, getAdminUser } = require('./admin');
 
 const isUserExists = exports.isUserExists = (username, callback) => {
@@ -51,15 +51,12 @@ exports.createUser = function(data, callback) {
         return callback(new Error("Password is missing!"));
     }
 
-    const username = data.username,
-        hash = generateHash(username);
+    const username = data.username;
 
     const userObj = {
         username: username,
         password: data.password,
-        role: data.role || "user",
-        gravatarHash: hash,
-        avatarUrl: `https://www.gravatar.com/avatar/${hash}?d=mm&r=pg&s=128`,
+        role: data.role || ROLES.USER,
         lastLogin: Date.now()
     };
 
@@ -96,7 +93,7 @@ exports.authenticateLocal = (req, res, next) => {
 }
 
 exports.authenticateJwt = passport.authenticate('jwt', { session: false });
-exports.authenticateGoogle = passport.authenticate('google', { scope: ['profile'] });
+exports.authenticateGoogle = passport.authenticate('google', { scope: ['profile', 'email'] });
 exports.authenticateFacebook = passport.authenticate('facebook', { scope: ['email'] });
 
 const oAuthCallback = (type) => {

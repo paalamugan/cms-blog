@@ -5,7 +5,7 @@ export const navigations = [
     name: "Users",
     path: "/users",
     icon: "people",
-    auth: authRoles.user
+    auth: authRoles.admin
   },
   {
     name: "Posts",

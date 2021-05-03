@@ -66,6 +66,8 @@ FACEBOOK_CLIENT_ID=<Your facebook client id>(Optional)
 FACEBOOK_CLIENT_SECRET=<Your facebook client secret key>(Optional)
 GOOGLE_CLIENT_ID=<Your google client id>(Optional)
 GOOGLE_CLIENT_SECRET=<Your google client secret key>(Optional)
+S3_ACCESS_KEY=<your s3 access key>(Optional)
+S3_SECRET_ACCESS_KEY=<your s3 secret access key>(Optional)
 ```
 
 - If you want to start a both backend and frontend simultaneously in single command, use below command

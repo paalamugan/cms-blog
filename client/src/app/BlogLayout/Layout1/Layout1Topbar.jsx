@@ -78,7 +78,7 @@ class Layout1Topbar extends Component {
               </IconButton>
             </div>
             <div className="flex items-center">
-              <span className="text-white capitalize">Hi <strong>{session.username}</strong></span>
+              <span className="text-white">Hi <strong>{session.username}</strong></span>
               <BlogMenu
                 menuButton={
                   <img

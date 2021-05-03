@@ -1,8 +1,8 @@
 "use strict";
 
-const mongoose = require("mongoose");
-const bluebird = require('bluebird');
-const { mongodb } = require(global.rootPath + '/config');
+const mongoose         = require("mongoose");
+const bluebird         = require('bluebird');
+const { mongodb }      = require(global.rootPath + '/config');
 
 const connect = () => {
     const options = {

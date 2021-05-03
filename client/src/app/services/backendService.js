@@ -16,19 +16,15 @@ const handleError = ({ response }) => {
     setTimeout(() => {
 
         if (response.status === 401) { // "Unauthorized"
-
             jwtAuthService.logout();
-
             history.push({
                 pathname: '/login'
             });
 
-        } else if (response.status === 403) {
-
+        } else if (response.status === 403) { // Forbidden
             history.push({
                 pathname: '/posts'
             });
-
         } else if (response.status === 404) { // "Not Found"
             history.push({
                 pathname: '/404'
@@ -82,12 +78,12 @@ class Service {
         return this.request.get(url, { params }).then(handleResponse).catch(handleError);
     }
 
-    post(url, data = {}) {
-        return this.request.post(url, { ...data }).then(handleResponse).catch(handleError);
+    post(url, data = {}, options) {
+        return this.request.post(url, data, { ...options }).then(handleResponse).catch(handleError);
     }
 
-    put(url, data = {}) {
-        return this.request.put(url, { ...data }).then(handleResponse).catch(handleError);
+    put(url, data = {}, options) {
+        return this.request.put(url, data, { ...options }).then(handleResponse).catch(handleError);
     }
 
     delete(url, params) {

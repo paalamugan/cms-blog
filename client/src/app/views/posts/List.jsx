@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import PropTypes from 'prop-types';
 import moment from "moment";
 import { 
@@ -20,31 +20,43 @@ import {
   ConfirmationDialog, 
   BlogCustomizedSnackbar } from "blog";
 import { isAdmin } from "app/constant";
+import { useRefresh } from "app/custom-hooks";
 
-const List  = ({ getAllPost, deletePost, post, session, location : { pathname } }) => {
+const List  = ({ getAllPost, deletePost, post, session, location: { pathname } }) => {
+
 
   const [loading, setLoading] = useState(true);
   const [deleteSelectedId, setDeleteSelectedId] = useState(null);
   const snackBarRef = useRef();
+  const refresh = useRefresh();
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-
+  
     if (session.username) {
+
       setLoading(true);
-      getAllPost().then(() => setLoading(false));
+      getAllPost().then(({ success, data }) => {
+
+        if (!success) {
+          snackBarRef.current.open({ message: data });
+        }
+
+        setLoading(false);
+
+      });
     }
 
-  }, []);
+  }, [refresh]);
   
-  const onConfirmDelete = () => {
+  const onConfirmDelete = useCallback(() => {
     deletePost(deleteSelectedId).then(({ success, data }) => {
       if (!success) {
         return snackBarRef.current.open({ message: data })
       }
       setDeleteSelectedId(null);
     })
-  }
+  }, [snackBarRef, deleteSelectedId]);
 
   return (
     <div className="m-sm-30">
@@ -58,6 +70,13 @@ const List  = ({ getAllPost, deletePost, post, session, location : { pathname } 
 
       <div className="flex justify-between items-center items-center mb-6">
         <h3 className="m-0">Latest Posts</h3>
+        <div>
+          <Button
+            variant="outlined"
+            className="mr-3"
+            onClick={refresh}>
+              Refresh
+          </Button>
         {
           isAdmin(session.role) ?
             (<Link to={`${pathname}/add`}>
@@ -68,6 +87,7 @@ const List  = ({ getAllPost, deletePost, post, session, location : { pathname } 
               </Button>
             </Link>) : null
         }
+        </div>
       </div>
       <Divider className="mb-6" />
       { loading ? <BlogLoading /> : 
@@ -75,12 +95,12 @@ const List  = ({ getAllPost, deletePost, post, session, location : { pathname } 
           { 
             post.lists.length ? (post.lists.map((list) => (
               <Grid key={list._id} item lg={4} md={6} sm={12} xs={12}>
-                <Card elevation={6}>
+                <Card elevation={6} className="card-post-image">
                   <CardMedia
                     component="img"
                     alt={list.title}
                     height="180"
-                    image={list.imageUrl}
+                    image={list.imageUrl || list.defaultImageUrl}
                     title={list.title}
                   />
                   <CardContent>
