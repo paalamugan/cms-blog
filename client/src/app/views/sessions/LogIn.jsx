@@ -61,6 +61,7 @@ const styles = theme => ({
   },
 
   forgetPassword: {
+    width: '100%',
     alignItems: "center", 
     justifyContent: "flex-end", 
     background: "none",
@@ -173,24 +174,27 @@ class LogIn extends Component {
                       validators={["required"]}
                       errorMessages={["Password field is required"]}
                     />
-                    <Grid container direction="row" justify="space-between">
-                      <FormControlLabel
-                        className="mb-3 mt-2"
-                        style={{ alignItems: "center" }}
-                        name="remember"
-                        onChange={this.handleChange}
-                        control={<Checkbox className="pt-0 pb-0" checked={remember} />}
-                        label="Remember me"
-                      />
-                      <Button
-                        color="primary"
-                        className={classes.forgetPassword}
-                        onClick={() =>
-                          this.props.history.push("/forgot-password")
-                        }
-                      >
-                        Forgot password?
-                      </Button>
+                    <Grid container direction="row" justify="space-between" alignItems="stretch" className="mb-1">
+                      <Grid item xs style={{ alignSelf: "center" }}>
+                        <FormControlLabel
+                          style={{ alignItems: "center" }}
+                          name="remember"
+                          onChange={this.handleChange}
+                          control={<Checkbox className="pt-0 pb-0" checked={remember} />}
+                          label="Remember me"
+                        />
+                      </Grid>
+                      <Grid item xs>
+                        <Button
+                          color="primary"
+                          className={classes.forgetPassword}
+                          onClick={() =>
+                            this.props.history.push("/forgot-password")
+                          }
+                        >
+                          Forgot password?
+                        </Button>
+                      </Grid>
                     </Grid>
                     <div className="flex flex-wrap items-center justify-center mb-4">
                       <Grid container spacing={2} direction="column">
