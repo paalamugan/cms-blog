@@ -7,12 +7,12 @@ module.exports = function(passport) {
 
     // use local strategy
     passport.use(new LocalStrategy({
-            usernameField: 'username',
+            usernameField: 'email',
             passwordField: 'password'
         },
-        function(username, password, done) {
+        function(email, password, done) {
 
-            authenticateUser(username, password, function(err, user) {
+            authenticateUser(email, password, function(err, user) {
 
                 if (err) {
                     return done(null, false, {

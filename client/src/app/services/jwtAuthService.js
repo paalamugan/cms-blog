@@ -2,27 +2,34 @@ import moment from "moment";
 import { auth, api } from "./backendService";
 import localStorageService from "./localStorageService";
 
+const logInSuccess = function(res) {
+
+  if (!res.success) {
+    return res;
+  }
+
+  // Login successful
+  // Save token
+  this.setSession({ token: res.data.token, expiresIn: res.data.expiresIn });
+  // Set user
+  this.setUser(res.data.user);
+
+  return res;
+}
+
 class JwtAuthService {
 
   // You need to send http request with email and passsword to your server in this method
   // Your server will return user object & a Token
   // User should have role property
   // You can define roles in app/auth/authRoles.js
-  loginWithUsernameAndPassword = (username, password) => {
-    return auth.post('login', { username, password }).then((res) => {
-
-      if (!res.success) {
-        return res;
-      }
-
-      // Login successful
-      // Save token
-      this.setSession({ token: res.data.token, expiresIn: res.data.expiresIn });
-      // Set user
-      this.setUser(res.data.user);
-      return res;
-    });
+  loginWithEmailAndPassword = (email, password) => {
+    return auth.post('login', { email, password }).then(logInSuccess.bind(this));
   };
+
+  registerUser = ({ username, email, password, captcha }) => {
+    return auth.post('signup', { username, email, password, captcha }).then(logInSuccess.bind(this));
+  }
 
   // You need to send http requst with existing token to your server to check token is valid
   // This method is being used when user logged in & app is reloaded
@@ -40,6 +47,7 @@ class JwtAuthService {
       }
 
       this.setUser(data);
+
       return data;
     });
   };

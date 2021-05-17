@@ -1,25 +1,28 @@
 const validator = require('validator');
 const passport = require('passport');
+const async    = require('async');
+const crypto   = require('crypto');
 const { User } = require('../models');
 const { COOKIE_TOKEN_NAME, ROLES } = require('../common');
 const { isAdminUser, getAdminUser } = require('./admin');
+const recaptcha = require('../helper/recaptcha');
 
-const isUserExists = exports.isUserExists = (username, callback) => {
+const isUserExists = exports.isUserExists = (email, callback) => {
 
-    if (isAdminUser(username)) {
+    if (isAdminUser(email)) {
         return callback(new Error("Already admin has this name. So you cannot use this username!"));
     }
 
     let err = null;
 
     User.findOne({
-        '$or': [{ username: username }, { email: username }]
+        '$or': [{ email: email }, { username: email }]
     }, function(error, user) {
 
         err = error;
 
         if (user) {
-            let message = (validator.isEmail(username) ? "User with email " : "Username ") + `"${username}" already exist."`;
+            let message = (validator.isEmail(email) ? "User with email " : "Username ") + `"${email}" already exist."`;
             err = new Error(message);
         }
 
@@ -47,31 +50,119 @@ exports.createUser = function(data, callback) {
         return callback(new Error("Username is missing!"));
     }
 
+    if (!data.email) {
+        return callback(new Error("Email is missing!"));
+    }
+
     if (!data.password) {
         return callback(new Error("Password is missing!"));
     }
 
-    const username = data.username;
+    data.lastLogin = Date.now();
 
-    const userObj = {
-        username: username,
-        password: data.password,
-        role: data.role || ROLES.USER,
-        lastLogin: Date.now()
-    };
-
-    if (data.email) {
-        userObj.email = data.email;
-    }
-
-    isUserExists(username, (err) => {
+    isUserExists(data.email, (err) => {
         
         if (err) {
             return callback(err);
         }
 
         
-        User.create(userObj, callback);
+        User.create(data, callback);
+    });
+}
+
+exports.forgotPassword = (req, res, cb) => {
+    let email = req.body.email,
+        captcha = req.body.captcha;
+
+    if (!captcha) {
+        return cb(new Error('Missing ReCaptcha code. Please check \"I\'m not a robot\" checkbox!'));
+    }
+
+    async.waterfall([
+        // Check recaptcha code
+        function (callback) {
+            recaptcha.validate(captcha, callback);
+        },
+
+        function(callback) {
+            User.findOne({ email: email }, function(err, user) {
+
+                if (err || !user) {
+                    return callback(new Error("User with email '"+ email + "' does not exist."));
+                }
+
+                return callback(null, user);
+            });
+        },
+
+        function(user, callback) {
+
+            crypto.randomBytes(20, function(err, buffer) {
+
+                if (err) {
+                    return callback(new Error('Problem in getting password reset token. Try again.'));
+                }
+
+                let token = buffer.toString('hex');
+                user.resetPasswordToken = token;
+                user.resetPasswordExpires = Date.now() + 86400000; // 24 hour
+
+                user.save(function(err) {
+                    if (err) {
+                        return callback(new Error('Problem in getting password reset token. Try again.'));
+                    }
+
+                    callback(err, user);
+                });
+            });
+        }
+
+    ], function(err, user) {
+        cb(err, user);
+    });
+}
+
+exports.resetPassword = function(req, res, callback) {
+
+    let password = req.body.password,
+        passwordToken = req.body.passwordToken;
+
+    User.findOne({
+        resetPasswordToken: passwordToken,
+        resetPasswordExpires: {
+            $gt: Date.now()
+        }
+    }, function(error, user) {
+
+        if (error || !user) {
+            return callback(new Error('Password reset token is invalid or has expired.'));
+        }
+
+        user.set('password', password);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        user.save(function(err, result) {
+
+            if (err) {
+                return callback(new Error('Couldn\'t save changes with new password.'));
+            }
+
+            callback(err, result);
+        });
+    });
+}
+
+exports.changePassword = function(req, res, callback) {
+
+    var currentPassword = req.body.currentPassword,
+        newPassword = req.body.newPassword;
+
+    User.changePassword(req.user._id,
+            currentPassword,
+            newPassword, function(err, user) {
+        callback(err, user);
     });
 }
 
@@ -84,7 +175,7 @@ exports.authenticateLocal = (req, res, next) => {
         }
 
         if (!user) {
-            return next(new Error('Invalid username or password.'));
+            return next(new Error('Invalid email or password.'));
         }
 
         return next(null, user);

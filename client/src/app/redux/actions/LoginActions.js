@@ -1,12 +1,13 @@
-import jwtAuthService from "../../services/jwtAuthService";
-import { setSessionData } from "./SessionActions";
-import { getNavigationByUser, resetNavigationByUser } from './NavigationAction';
+import { refreshNavigationByUser } from './NavigationAction';
 import history from "history.js";
+import jwtAuthService from "app/services/jwtAuthService";
+import { auth } from "app/services/backendService";
 
 export const LOGIN_ERROR = "LOGIN_ERROR";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_LOADING = "LOGIN_LOADING";
 export const RESET_PASSWORD = "RESET_PASSWORD";
+export const FORGET_PASSWORD = "FORGET_PASSWORD";
 
 export function loginErrorMessage(message) {
   return dispatch => {
@@ -17,26 +18,26 @@ export function loginErrorMessage(message) {
   };
 }
 
-export function loginWithUsernameAndPassword({ username, password }) {
+export function loginWithEmailAndPassword({ email, password }) {
   return (dispatch, getState) => {
     dispatch({
       type: LOGIN_LOADING
     });
 
     jwtAuthService
-      .loginWithUsernameAndPassword(username, password)
+      .loginWithEmailAndPassword(email, password)
       .then(({ success, data }) => {
 
         if (!success) {
           return loginErrorMessage(data)(dispatch);
         }
 
-        resetNavigationByUser()(dispatch);
-        dispatch(setSessionData(data.user));
-        getNavigationByUser()(dispatch, getState);
+        refreshNavigationByUser(data.user)(dispatch, getState);
 
-        history.push({
-          pathname: "/"
+        let pathname = data.user.verified ? "/" : "/signup-confirmation";
+
+        history.push({ 
+          pathname 
         });
 
         return dispatch({
@@ -46,11 +47,70 @@ export function loginWithUsernameAndPassword({ username, password }) {
   };
 }
 
-export function resetPassword({ email }) {
+export function forgetPassword({ email, captcha }) {
   return dispatch => {
+    
     dispatch({
-      payload: email,
-      type: RESET_PASSWORD
+      type: LOGIN_LOADING
     });
+
+    return auth.post('/forgot-password', { email, captcha }).then((res) => {
+
+      if (res.success) {
+        dispatch({
+          type: LOGIN_SUCCESS
+        });
+      }
+
+      return res;
+    });
+  };
+}
+
+export function resetPassword({ email, password, passwordToken, confirmPassword }) {
+  return dispatch => {
+
+    dispatch({
+      type: LOGIN_LOADING
+    });
+
+    return auth.post('/reset-password', { email, password, passwordToken, confirmPassword }).then((res) => {
+      
+      if (res.success) {
+        dispatch({
+          type: LOGIN_SUCCESS
+        });
+      }
+
+      return res;
+    });
+    
+  };
+}
+
+export function registerUser({ username, email, password, captcha }) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: LOGIN_LOADING
+    });
+
+    jwtAuthService
+      .registerUser({ username, email, password, captcha })
+      .then(({ success, data }) => {
+
+        if (!success) {
+          return loginErrorMessage(data)(dispatch);
+        }
+
+        refreshNavigationByUser(data.user)(dispatch, getState);
+
+        history.push({
+          pathname: "/signup-confirmation"
+        });
+
+        return dispatch({
+          type: LOGIN_SUCCESS
+        });
+      })
   };
 }

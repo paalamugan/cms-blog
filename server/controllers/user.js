@@ -3,14 +3,16 @@ const { authModule } = require('../auth');
 
 exports.list = (req, res, next) => {
 
-    const options = {};
+    const options = {
+        ownedBy: req.user.ownedBy || req.user._id
+    };
 
     User.list(options, (err, users) => {
 
         if (err) {
             return next(err);
         }
-        
+
         res.json(users);
     });
 }
@@ -32,10 +34,14 @@ exports.get = (req, res, next) => {
 
 exports.create = (req, res, next) => {
 
+    req.body.ownedBy = req.user._id;
+
     authModule.createUser(req.body, (err, user) => {
+
         if (err) {
             return next(err);
         }
+
         res.json(user);
     });
 
@@ -79,5 +85,5 @@ exports.delete = (req, res, next) => {
     .catch((err) => {
         return next(err);
     });
-    
+
 }

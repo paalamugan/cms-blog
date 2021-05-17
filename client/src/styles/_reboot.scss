@@ -34,14 +34,6 @@ h6,
   color: $text-body !important;
 }
 
-.MuiButton-startIcon {
-  margin-right: 4px !important;
-}
-
-.MuiDialogTitle-root {
-  background: #eae8e8
-}
-
 .card-post-image {
   .MuiCardMedia-img {
     object-fit: fill;
@@ -54,4 +46,8 @@ code {
     monospace;
   color: rgba(255, 0, 221, 0.863);
   font-size: 16px;
+}
+
+input:disabled, input[disabled] {
+  cursor: not-allowed;
 }

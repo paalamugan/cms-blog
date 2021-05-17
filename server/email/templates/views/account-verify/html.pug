@@ -1,0 +1,18 @@
+extend ../../layouts/main.pug
+
+block title
+  title= t('Account Verification')
+
+block preheader
+  span= t(`Account Verification - ${app.title}`)
+
+block content
+    p Hello <b>#{username}</b>!
+    p
+      | Welcome to <b>#{app.title}</b>! Here is a special link to activate your new account:
+    p
+      a(href=`${app.domain}/verify/${token}`) Activate my account →
+    p
+      | Thanks so much for signing up our services! If you have any questions, or suggestions, please feel free to email us here at&nbsp;
+      a(href='mailto:' + app.contactEmail) #{app.contactEmail}
+      | .

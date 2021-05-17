@@ -3,10 +3,10 @@
 module.exports = function (ROOT_PATH) {
     
     const config = {
-        domain: '',
+        domain: process.env.SITE_URL || `http://localhost:${process.env.PORT || 9000}`,
         root: ROOT_PATH,
         env: process.env.NODE_ENV || "production",
-        port: process.env.PORT || 8000,
+        port: process.env.PORT || 9000,
         mongodb: {
             url: process.env.MONGODB_URI || "mongodb://localhost/cms-blog",
         },
@@ -15,6 +15,13 @@ module.exports = function (ROOT_PATH) {
         jwtSecretKey: process.env.JWT_SECRET_KEY || "myjwtsecret",
         logging: {
             apiAccessLog: '/tmp/cms-blog-api.log'
+        },
+        sendgrid: {
+            service: 'SendGrid',
+            auth: {
+                user: process.env.SENDGRID_USERNAME,
+                pass: process.env.SENDGRID_PASSWORD
+            }
         }
     }
     

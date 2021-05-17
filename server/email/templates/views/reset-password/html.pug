@@ -1,0 +1,16 @@
+extend ../../layouts/main.pug
+
+block title
+  title= t('Successfully Reset Password')
+
+block preheader
+  span= t(`Successfully Reset Password - ${app.title}`)
+
+block content
+  p #{t('Hello')} <b>#{username}</b>!
+  p
+    | This is a courtesy message to confirm that your password was just changed.
+  p
+    | Thanks so much for using our services! If you have any questions, or suggestions, please feel free to email us here at&nbsp;
+    a(href='mailto:' + app.contactEmail) #{app.contactEmail}
+    | .

@@ -2,7 +2,9 @@ const { Post, Comment } = require('../models');
 
 exports.list = (req, res, next) => {
 
-    const options = {};
+    const options = {
+        user: req.user.ownedBy || req.user._id
+    };
 
     Post.list(options, (err, posts) => {
 

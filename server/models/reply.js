@@ -5,7 +5,13 @@ const Schema             = mongoose.Schema;
 const CreateUpdatedAt    = require('mongoose-timestamp');
 const { sanitizeHtml } = require('../common');
 
-var ReplaySchema = new Schema({
+const schemaOptions = {
+    toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+    toObject: { virtuals: true }, // So `toObject()` output includes virtuals,
+    versionKey: false // hide __v property
+}
+
+const ReplaySchema = new Schema({
 
     message: {
         type: String,
@@ -26,13 +32,13 @@ var ReplaySchema = new Schema({
         ref: 'Post'
     },
 
-    commentId: {
+    comment: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'Comment'
     }
     
-}, { versionKey: false });
+}, schemaOptions);
 
 ReplaySchema.plugin(CreateUpdatedAt);
 

@@ -1,7 +1,7 @@
 const authModule            = require('./auth-module');
 const admin                 = require('./admin');
 const { User }              = require('../models');
-const { COOKIE_TOKEN_NAME } = require('../common');
+const { COOKIE_TOKEN_NAME, generateJwtToken, getSessionUser, ROLES } = require('../common');
 
 exports.authModule = authModule;
 exports.admin = admin;
@@ -27,23 +27,34 @@ exports.isAuthenticated = (req, res, next) => {
         return next(error);
     }
 
-    return next();
-    // authModule.getUser(req.user._id, (err) => {
+    authModule.getUser(req.user._id, (err) => {
 
-    //     if (err) {
-    //         return next(err);
-    //     }
+        if (err) {
+            return next(err);
+        }
 
-    //     return next();
-    // });
+        return next();
+    });
 
 }
 
-exports.authenticateUser = (username, password, callback) => {
+exports.authenticateJwtToken = (user) => {
+
+    const auth_token = generateJwtToken(user);
+
+    return { 
+        user: getSessionUser(user), 
+        token: auth_token.token, 
+        expiresIn: auth_token.expiresIn 
+    }
+}
+
+
+exports.authenticateUser = (email, password, callback) => {
 
     let adminUser = admin.getAdminUser();
     
-    if (admin.isAdminUser(username)) {
+    if (admin.isAdminUser(email)) {
 
         if (adminUser.password !== password) {
             return callback(new Error("admin password is incorrect"));
@@ -52,7 +63,7 @@ exports.authenticateUser = (username, password, callback) => {
         return callback(null, adminUser);
     }
 
-    User.authenticate(username, password, callback);
+    User.authenticate(email, password, callback);
     
 }
 
@@ -65,7 +76,7 @@ exports.authenticateRole = (role) => {
             return next(error);
         }
 
-        next();
+        return next();
     }
 }
 
@@ -144,19 +155,34 @@ exports.passportOAuthCallback = (type) => {
 
             let obj = {
                 username: profile.displayName,
-                provider: type
+                role: ROLES.ADMIN,
+                provider: type,
+                verified: true
             }
 
-            obj.avatarUrl = (type === "google") ? profile.photos[0].value : 
-                            (type === "facebook") ? profile.profileUrl : '';
-            
+            if (type === "google") {
+                // obj.username = profile.displayName;
+                obj.email = profile.emails[0].value;
+                obj.avatarUrl = profile.photos[0].value
+            } else if (type === "facebook") {
+                // obj.username = profile.name.givenName + ' ' + profile.name.familyName;
+                obj.email = profile.emails[0].value;
+                obj.avatarUrl = profile.profileUrl;
+            }
+
             if (user) {
 
                 if(!user[property]) {
                     
                     user.username = obj.username;
+                    user.email = obj.email;
+                    user.role = obj.role;
                     user.provider = obj.type;
-                    user.avatarUrl = obj.avatarUrl;
+                    user.verified = obj.verified;
+
+                    if (obj.avatarUrl) {
+                        user.avatarUrl = obj.avatarUrl;
+                    }
 
                     user[property] = profile.id;
                     user.save(done);

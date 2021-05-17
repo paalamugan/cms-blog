@@ -1,20 +1,21 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import {
   Card,
   Checkbox,
   FormControlLabel,
   Grid,
   Button,
+  Hidden,
   CircularProgress
 } from "@material-ui/core";
 import FacebookIcon from '@material-ui/icons/Facebook';
 import { withStyles } from "@material-ui/core/styles";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 
-import { loginWithUsernameAndPassword, loginErrorMessage } from "../../redux/actions/LoginActions";
+import { loginWithEmailAndPassword, loginErrorMessage } from "../../redux/actions/LoginActions";
 import { BlogCustomizedSnackbar } from "blog";
 
 const styles = theme => ({
@@ -57,13 +58,23 @@ const styles = theme => ({
   authButton: {
     width: '100%',
     marginBottom: theme.spacing(1) + 4 + 'px'
+  },
+
+  forgetPassword: {
+    alignItems: "center", 
+    justifyContent: "flex-end", 
+    background: "none",
+    '&:hover': {
+      textDecoration: "underline",
+      background: "initial",
+    }
   }
 
 });
 
 class LogIn extends Component {
   state = {
-    username: "",
+    email: "",
     password: "",
     remember: true
   };
@@ -78,7 +89,7 @@ class LogIn extends Component {
   };
 
   handleFormSubmit = event => {
-    this.props.loginWithUsernameAndPassword({ ...this.state });
+    this.props.loginWithEmailAndPassword({ ...this.state });
   };
 
   componentDidUpdate() {
@@ -92,7 +103,7 @@ class LogIn extends Component {
   }
 
   render() {
-    let { username, password, remember } = this.state;
+    let { email, password, remember } = this.state;
     let { classes } = this.props;
     return (
       <div className="signup flex justify-center w-full h-full-screen">
@@ -100,11 +111,13 @@ class LogIn extends Component {
         <div className="p-8">
           <Card className="signup-card position-relative y-center">
             <Grid container>
-              <Grid item lg={5} md={5} sm={5} xs={12}>
-                <div className="flex justify-center items-center h-full">
-                  <img src="/assets/images/sq-2.jpg" alt="sq" className="h-full" />
-                </div>
-              </Grid>
+              <Hidden xsDown>
+                <Grid item lg={5} md={5} sm={5} xs={12}>
+                  <div className="flex justify-center items-center h-full">
+                    <img src="/assets/images/sq-2.jpg" alt="sq" className="h-full" />
+                  </div>
+                </Grid>
+              </Hidden>
               <Grid item lg={7} md={7} sm={7} xs={12}>
                 <div className="px-8 pt-8">
                   <a href="/auth/google">
@@ -141,15 +154,13 @@ class LogIn extends Component {
                     <TextValidator
                       className="mb-6 w-full"
                       variant="outlined"
-                      label="Username"
+                      label="Email"
                       onChange={this.handleChange}
-                      type="text"
-                      name="username"
-                      value={username}
+                      type="email"
+                      name="email"
+                      value={email}
                       validators={["required"]}
-                      errorMessages={[
-                        "this field is required"
-                      ]}
+                      errorMessages={["Email field is required"]}
                     />
                     <TextValidator
                       className="mb-3 w-full"
@@ -160,52 +171,62 @@ class LogIn extends Component {
                       type="password"
                       value={password}
                       validators={["required"]}
-                      errorMessages={["this field is required"]}
+                      errorMessages={["Password field is required"]}
                     />
-                    <FormControlLabel
-                      className="mb-3 mt-2"
-                      style={{ alignItems: "end" }}
-                      name="remember"
-                      onChange={this.handleChange}
-                      control={<Checkbox className="pt-0" checked={remember} />}
-                      label="Remember me"
-                    />
-                    <div className="flex flex-wrap items-center justify-center mb-4">
-                      <div className={classes.wrapper}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          disabled={this.props.login.loading}
-                          type="submit"
-                          className="w-full"
-                        >
-                          Log in
-                        </Button>
-                        {this.props.login.loading && (
-                          <CircularProgress
-                            size={24}
-                            className={classes.buttonProgress}
-                          />
-                        )}
-                      </div>
-                      {/* <span className="mr-2 ml-5">or</span>
+                    <Grid container direction="row" justify="space-between">
+                      <FormControlLabel
+                        className="mb-3 mt-2"
+                        style={{ alignItems: "center" }}
+                        name="remember"
+                        onChange={this.handleChange}
+                        control={<Checkbox className="pt-0 pb-0" checked={remember} />}
+                        label="Remember me"
+                      />
                       <Button
-                        className="capitalize"
+                        color="primary"
+                        className={classes.forgetPassword}
                         onClick={() =>
-                          this.props.history.push("/signup")
+                          this.props.history.push("/forgot-password")
                         }
                       >
-                        Sign up
-                      </Button> */}
+                        Forgot password?
+                      </Button>
+                    </Grid>
+                    <div className="flex flex-wrap items-center justify-center mb-4">
+                      <Grid container spacing={2} direction="column">
+                        <Grid item xs>
+                          <div className={classes.wrapper}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              disabled={this.props.login.loading}
+                              type="submit"
+                              className="w-full"
+                            >
+                              Log In
+                            </Button>
+                            {this.props.login.loading && (
+                              <CircularProgress
+                                size={24}
+                                className={classes.buttonProgress}
+                              />
+                            )}
+                          </div>
+                        </Grid>
+                        <Grid item xs>
+                          <Button
+                            className="capitalize w-full"
+                            variant="outlined"
+                            color="primary"
+                            onClick={() =>
+                              this.props.history.push("/signup")
+                            }
+                          >
+                            Sign up
+                          </Button>
+                        </Grid>
+                      </Grid>
                     </div>
-                    {/* <Button
-                      className="text-primary"
-                      onClick={() =>
-                        this.props.history.push("/forgot-password")
-                      }
-                    >
-                      Forgot password?
-                    </Button> */}
                   </ValidatorForm>
                 </div>
               </Grid>
@@ -218,11 +239,11 @@ class LogIn extends Component {
 }
 
 const mapStateToProps = state => ({
-  loginWithUsernameAndPassword: PropTypes.func.isRequired,
+  loginWithEmailAndPassword: PropTypes.func.isRequired,
   loginErrorMessage: PropTypes.func.isRequired,
   login: state.login
 });
 
 export default withStyles(styles, { withTheme: true })(
-  withRouter(connect(mapStateToProps, { loginWithUsernameAndPassword, loginErrorMessage })(LogIn))
+  withRouter(connect(mapStateToProps, { loginWithEmailAndPassword, loginErrorMessage })(LogIn))
 );

@@ -26,16 +26,20 @@ config.isAWS = function () {
     return !!this.awsS3.accessKeyId;
 }
 
+if (config.isDev()) {
+    config.smtp = (config.mailtrap.auth.user ? config.mailtrap :
+                   config.gmail.auth.user ? config.gmail : null);
+} else {
+    config.smtp = (config.sendgrid.auth.user ? config.sendgrid :
+                   config.gmail.auth.user ? config.gmail : null);
+}
+
 config.isFacebookOAuth = !!(config.facebookAuth.clientID && config.facebookAuth.clientSecret);
 config.isGoogleOAuth = !!(config.googleAuth.clientID && config.googleAuth.clientSecret);
 
 const getAuthCallbackApi = (type) => {
     let path = `/auth/${type}/callback`;
-    let domain = config.domain;
-    if (domain) {
-        domain = config.isDev() ? `http://localhost:${config.port}` : `https://localhost:${config.port}`;
-    }
-    return  domain + path;
+    return (config.domain + path);
 }
 
 config.facebookAuth.callbackURL = getAuthCallbackApi('facebook');

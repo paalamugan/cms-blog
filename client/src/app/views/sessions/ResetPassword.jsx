@@ -1,23 +1,19 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-  Card,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  Button,
+import { 
+  Card, 
+  Grid, 
+  Button, 
   Hidden,
   CircularProgress,
   Typography
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
-import { registerUser, loginErrorMessage } from "../../redux/actions/LoginActions";
+import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { resetPassword, loginErrorMessage } from "../../redux/actions/LoginActions";
 import { BlogCustomizedSnackbar } from "blog";
-import ReCAPTCHA from "react-google-recaptcha";
-import { RECAPTCHA_SITE_KEY } from "app/constant";
+import backendService from 'app/services/backendService';
 
 const styles = theme => ({
   wrapper: {
@@ -35,31 +31,60 @@ const styles = theme => ({
 
 });
 
-class SignUp extends Component {
+class ResetPassword extends Component {
+
   state = {
-    username: "",
     email: "",
+    passwordToken: "",
     password: "",
-    agreement: false
+    confirmPassword: ""
   };
 
   snackbarRef = React.createRef();
-  recaptchaRef = React.createRef();
 
   handleChange = event => {
     event.persist();
     this.setState({
-      [event.target.name]: event.target.name === "agreement" ? event.target.checked : event.target.value
+      [event.target.name]: event.target.value
     });
   };
 
-  handleFormSubmit = event => {
-    let captcha = this.recaptchaRef.current.getValue();
-    this.props.registerUser({ ...this.state, captcha });
+  handleFormSubmit = () => {
+
+    this.props.resetPassword({ ...this.state })
+    .then(({ success, data }) => {
+
+      if (!success) {
+        return this.props.loginErrorMessage(data);
+      }
+
+      this.snackbarRef.current.open({ variant: "success", message: `Your password was successfully changed.` });
+      
+      setTimeout(() => {
+        this.props.history.push({
+          pathname: '/login'
+        });
+      }, 2000);
+
+    });
+
   };
 
-  onRecaptchaError = (error) => {
-    this.snackbarRef.current.open({ variant: "error", message: 'Recaptcha failed!. please refresh the page and try again!' });
+  componentDidMount() {
+
+    let query = backendService.queryParse(this.props.location.search);
+
+    if (query) {
+      this.setState({ email: query.email, passwordToken: query.token });
+    }
+
+    // custom rule will have name 'isPasswordMatch'
+    ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
+      if (value !== this.state.password) {
+          return false;
+      }
+      return true;
+    });
   }
 
   componentDidUpdate() {
@@ -69,17 +94,23 @@ class SignUp extends Component {
     if (!success && !loading && error) {
       this.snackbarRef.current.open({ variant: "error", message: error });
       this.props.loginErrorMessage(null);
-      this.recaptchaRef.current.reset();
     }
+
+  }
+
+  componentWillUnmount() {
+    // remove rule when it is not needed
+    ValidatorForm.removeValidationRule('isPasswordMatch');
   }
 
   render() {
-    let { username, agreement, email, password } = this.state;
+    let { email, passwordToken, password, confirmPassword } = this.state;
     let { classes } = this.props;
+
     return (
       <div className="signup flex justify-center w-full h-full-screen">
-        <BlogCustomizedSnackbar ref={this.snackbarRef} />
         <div className="p-8">
+          <BlogCustomizedSnackbar ref={this.snackbarRef} />
           <Card className="signup-card position-relative y-center">
             <Grid container>
               <Hidden xsDown>
@@ -90,30 +121,18 @@ class SignUp extends Component {
                 </Grid>
               </Hidden>
               <Grid item lg={7} md={7} sm={7} xs={12}>
-                <div className="px-9 pb-9 pt-6 h-full">
-                  <Typography className="text-center mb-4" component="h6" variant="h5"><b>Sign Up</b></Typography>
+                <div className="px-9 pb-9 pt-6 h-full position-relative">
+                  <Typography className="text-center mb-4" component="h6" variant="h5"><b>Reset Password</b></Typography>
                   <ValidatorForm ref="form" onSubmit={this.handleFormSubmit}>
                     <TextValidator
-                      className="mb-6 w-full"
-                      variant="outlined"
-                      label="Username"
-                      onChange={this.handleChange}
-                      type="text"
-                      name="username"
-                      value={username}
-                      required
-                      validators={["required"]}
-                      errorMessages={["Username field is required"]}
-                    />
-                    <TextValidator
-                      className="mb-6 w-full"
+                      className="mb-3 w-full"
                       variant="outlined"
                       label="Email"
                       onChange={this.handleChange}
                       type="email"
                       name="email"
                       value={email}
-                      required
+                      disabled={true}
                       validators={["required", "isEmail"]}
                       errorMessages={[
                         "Email field is required",
@@ -121,30 +140,39 @@ class SignUp extends Component {
                       ]}
                     />
                     <TextValidator
-                      className="mb-4 w-full"
-                      label="Password"
+                      className="mb-3 w-full"
+                      label="Temporary Password Token"
+                      variant="outlined"
+                      onChange={this.handleChange}
+                      name="passwordToken"
+                      type="password"
+                      value={passwordToken}
+                      disabled={true}
+                      validators={["required"]}
+                      errorMessages={["Password token field is required"]}
+                    />
+                    <TextValidator
+                      className="mb-3 w-full"
+                      label="New Password"
                       variant="outlined"
                       onChange={this.handleChange}
                       name="password"
                       type="password"
                       value={password}
-                      required
                       validators={["required"]}
-                      errorMessages={["password field is required"]}
+                      errorMessages={["Password field is required"]}
                     />
-                    <FormControlLabel
-                      className="mb-4"
-                      style={{ alignItems: "center" }}
-                      name="agreement"
+                    <TextValidator
+                      className="mb-3 w-full"
+                      label="Confirm New Password"
+                      variant="outlined"
                       onChange={this.handleChange}
-                      control={<Checkbox className="pt-0 pb-0" checked={agreement} />}
-                      label="I have read and agree to the terms of service."
+                      name="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      validators={["isPasswordMatch", "required"]}
+                      errorMessages={["Password mismatch", "Confirm Password field is required"]}
                     />
-                    <ReCAPTCHA
-                      className="mb-4 w-full"
-                      ref={this.recaptchaRef}
-                      sitekey={RECAPTCHA_SITE_KEY}
-                      onErrored={this.onRecaptchaError} />
                     <div className="flex flex-wrap items-center justify-center mb-4">
                       <Grid container spacing={2} direction="column">
                         <Grid item xs>
@@ -152,11 +180,11 @@ class SignUp extends Component {
                             <Button
                               variant="contained"
                               color="primary"
-                              disabled={this.props.login.loading || (!username || !email || !password || !agreement)}
+                              disabled={this.props.login.loading}
                               type="submit"
                               className="w-full"
                             >
-                              Register
+                              Submit
                             </Button>
                             {this.props.login.loading && (
                               <CircularProgress
@@ -192,11 +220,11 @@ class SignUp extends Component {
 }
 
 const mapStateToProps = state => ({
-  registerUser: PropTypes.func.isRequired,
+  resetPassword: PropTypes.func.isRequired,
   loginErrorMessage: PropTypes.func.isRequired,
   login: state.login
 });
 
 export default withStyles(styles, { withTheme: true })(
-  withRouter(connect(mapStateToProps, { registerUser, loginErrorMessage })(SignUp))
+  connect(mapStateToProps, { resetPassword, loginErrorMessage })(ResetPassword)
 );

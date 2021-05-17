@@ -3,7 +3,7 @@
 module.exports = function (ROOT_PATH) {
 
     const config = {
-        domain: '',
+        domain: `http://localhost:${process.env.PORT || 8000}`,
         root: ROOT_PATH,
         env: process.env.NODE_ENV || "development",
         port: process.env.PORT || 8000,

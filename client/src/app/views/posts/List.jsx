@@ -33,7 +33,7 @@ const List  = ({ getAllPost, deletePost, post, session, location: { pathname } }
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
   
-    if (session.username) {
+    if (session.verified) {
 
       setLoading(true);
       getAllPost().then(({ success, data }) => {
@@ -47,7 +47,7 @@ const List  = ({ getAllPost, deletePost, post, session, location: { pathname } }
       });
     }
 
-  }, [refresh]);
+  }, [refresh, session.verified]);
   
   const onConfirmDelete = useCallback(() => {
     deletePost(deleteSelectedId).then(({ success, data }) => {

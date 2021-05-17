@@ -47,7 +47,7 @@ const useStyles1 = makeStyles(theme => ({
 
 function MySnackbarContentWrapper(props) {
   const classes = useStyles1();
-  const { className, message, onClose, variant, ...other } = props;
+  const { className, message, onClose, variant, html, ...other } = props;
   const Icon = variantIcon[variant];
 
   return (
@@ -57,7 +57,7 @@ function MySnackbarContentWrapper(props) {
       message={
         <span id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
-          {message}
+          {html ? (<div dangerouslySetInnerHTML= {{ __html: message }}></div>) : message}
         </span>
       }
       action={[
@@ -88,15 +88,15 @@ const useStyles2 = makeStyles(theme => ({
   }
 }));
 
-const BlogCustomizedSnackbar = ({ open = false, variant = "error", message, content }, ref) => {
+const BlogCustomizedSnackbar = ({ open = false, variant = "error", message, content, autoHideDuration = 8000, html = false }, ref) => {
 
   const classes = useStyles2();
   const [isOpen, setOpen] = React.useState(open);
-  const [state, setState] = React.useState({ variant, message });
+  const [state, setState] = React.useState({ variant, message, autoHideDuration, html });
 
   useImperativeHandle(ref, () => ({
-    open({ variant = "error", message }) {
-      setState({ variant, message });
+    open({ variant = "error", autoHideDuration = 8000, html = false, message }) {
+      setState({ variant, message, autoHideDuration, html });
       setOpen(true);
     }
   }));
@@ -122,19 +122,21 @@ const BlogCustomizedSnackbar = ({ open = false, variant = "error", message, cont
           horizontal: "right"
         }}
         open={isOpen}
-        autoHideDuration={8000}
+        autoHideDuration={state.autoHideDuration}
         onClose={handleClose}
       >
         <MySnackbarContentWrapper
           onClose={handleClose}
           variant={state.variant}
           message={state.message}
+          html={state.html}
           className={"text-white"}
         />
       </Snackbar>
       {content && (<MySnackbarContentWrapper
         variant={state.variant}
         className={classes.margin}
+        html={state.html}
         message={state.message}
       />)}
     </div>

@@ -12,7 +12,7 @@ const BlogNoData = ({ children, className, message }) => {
       className={`mt-25${className ? (' ' + className) : ' '}`}
     >
 
-      <Grid item xs={3}>
+      <Grid item xs={10} sm={8} md={6} lg={4} xl={3}>
         <Card className="my-10">
           <Card elevation={0} className="upgrade-card bg-light-primary p-sm-24">
             <img src="/assets/images/illustrations/no-data.svg" alt="no-data" />

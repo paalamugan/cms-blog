@@ -7,14 +7,15 @@ import { getNavigationByUser } from "../redux/actions/NavigationAction";
 import jwtAuthService from "../services/jwtAuthService";
 import localStorageService from "../services/localStorageService";
 import history from "history.js";
-import { unAuthRoutes } from "app/constant.js";
+import { unAuthRoutes } from "app/constant";
 
-const checkJwtAuth = async (setSessionData) => {
+const checkJwtAuth = async (setSessionData, getNavigationByUser) => {
   // You need to send token to your server to check token is valid
   // modify loginWithToken method in jwtService
   let pathname = history.location.pathname;
-  let isUnAuthRoutes = !!unAuthRoutes.find((route) => pathname.includes(route));
 
+  let isUnAuthRoutes = !!unAuthRoutes.find((route) => pathname.includes(route));
+  
   if (isUnAuthRoutes) {
     return null;
   }
@@ -22,7 +23,18 @@ const checkJwtAuth = async (setSessionData) => {
   let session = await jwtAuthService.loginWithToken();
 
   if (session) {
+
     setSessionData(session);
+    getNavigationByUser();
+
+    setTimeout(() => {
+      if (!session.verified) {
+        history.push({
+          pathname: '/signup-confirmation'
+        })
+      }
+    }, 1000);
+
   } else {
 
     // history.push({
@@ -32,15 +44,13 @@ const checkJwtAuth = async (setSessionData) => {
     // jwtAuthService.logout();
   }
 
-  return session;
 };
 
 const Auth = ({ children, setSessionData, getNavigationByUser }) => {
   setSessionData(localStorageService.getUser());
 
   useEffect(() => {
-    checkJwtAuth(setSessionData);
-    getNavigationByUser();
+    checkJwtAuth(setSessionData, getNavigationByUser);
   }, [setSessionData, getNavigationByUser]);
 
   return <Fragment>{children}</Fragment>;

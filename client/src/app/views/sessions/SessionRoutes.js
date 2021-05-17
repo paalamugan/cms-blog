@@ -2,6 +2,9 @@ import SignUp from "./SignUp";
 import LogIn from "./LogIn";
 import NotFound from "./NotFound";
 import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
+import AccountVerify from "./AccountVerify";
+import SignUpConfirmation from "./SignUpConfirmation";
 
 const settings = {
   activeLayout: "layout1",
@@ -32,6 +35,11 @@ const sessionRoutes = [
     settings
   },
   {
+    path: "/signup-confirmation",
+    component: SignUpConfirmation,
+    settings
+  },
+  {
     path: "/login",
     component: LogIn,
     settings
@@ -39,6 +47,16 @@ const sessionRoutes = [
   {
     path: "/forgot-password",
     component: ForgotPassword,
+    settings
+  },
+  {
+    path: "/reset-password",
+    component: ResetPassword,
+    settings
+  },
+  {
+    path: "/verify/:token",
+    component: AccountVerify,
     settings
   },
   {

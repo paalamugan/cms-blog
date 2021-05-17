@@ -2,15 +2,17 @@
 
 const fs              = require('fs');
 const path            = require('path');
+const validator       = require('validator');
 const { Readable }    = require('stream');
 const jwt             = require('jsonwebtoken');
 const crypto          = require('crypto');
-
+const disposableEmailDomains = require('disposable-email-domains');
 const createDOMPurify = require('dompurify');
 const { JSDOM }       = require('jsdom');
 const dompurify       = createDOMPurify(new JSDOM().window);
 
 const { jwtSecretKey, getS3UploadStream } = require('../config');
+const customDisposableEmailDomains = require('../common/custom-disposable-email-domains');
 
 exports.generateJwtToken = (user) => {
 
@@ -44,8 +46,10 @@ exports.sanitizeHtml = (html) => {
 exports.getSessionUser = (user = {}) => {
 
     let obj = {
-        username: user.username, 
+        username: user.username,
+        email: user.email, 
         role: user.role,
+        verified: user.verified,
         avatarUrl: user.avatarUrl // 'https://www.gravatar.com/avatar/1234578803?d=mm&r=pg&s=128'  
     }
 
@@ -96,4 +100,24 @@ exports.uploadImageToS3 = (options = {}, callback) => {
 
     // Pipe the incoming filestream through compression, and upload to S3.
     fileStream.pipe(uploadStream);
+}
+
+exports.isValidEmail = function (email) {
+
+    if (!validator.isEmail(email)) {
+        throw new Error('Email is invalid!');
+    }
+
+    var domain = email.substring(email.lastIndexOf("@") + 1);
+    domain = (domain || '').toLowerCase();
+
+    var regex = /(traz)/gi; // Ignore domain if it has these string inside the domain.
+
+
+    if (disposableEmailDomains.indexOf(domain) !== -1 ||
+        customDisposableEmailDomains.indexOf(domain) !== -1 ||
+        domain.match(regex)) {
+        throw new Error('Invalid email! Please use your professional(company) email address');
+    }
+
 }

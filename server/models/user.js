@@ -2,27 +2,33 @@
 
 const _                = require('lodash');
 const mongoose         = require('mongoose');
-const slug             = require('mongoose-slug-updater');
+const Schema           = mongoose.Schema;
 const CreateUpdatedAt  = require('mongoose-timestamp');
 const bcrypt           = require('bcrypt');
 const validator        = require('validator');
 const { ROLES }        = require('../common');
-const { getAdminUser } = require('../auth/admin');
 
-var UserSchema = new mongoose.Schema({
+const schemaOptions = {
+    toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+    toObject: { virtuals: true }, // So `toObject()` output includes virtuals,
+    versionKey: false // hide __v property
+}
+
+const UserSchema = new mongoose.Schema({
 
     // firstName: String,
     // lastName: String,
 
     username: {
         type: String,
-        // required: true,
-        // index: { unique: true }
+        required: true
     },
-    
+
     email: {
         type: String,
         lowercase: true,
+        required: true,
+        index: { unique: true },
         validator: (value) => {
             return validator.isEmail(value)
         }
@@ -57,17 +63,30 @@ var UserSchema = new mongoose.Schema({
         default: "jwt"
     },
 
+    ownedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
+    verified: {
+        type: Boolean,
+        default: true
+    },
+
+    verifyToken: {
+        type: String
+    },
+
     lastLogin: Date,
-    gravatarHash: String,
 
     googleId: String,
     facebookId: String,
 
-    // slug: { type: String, slug: ['firstName', 'lastName'], unique: true } 
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 
-}, { versionKey: false });
+}, schemaOptions);
 
-// UserSchema.plugin(slug);
 UserSchema.plugin(CreateUpdatedAt);
 
 UserSchema.virtual('password')
@@ -84,10 +103,10 @@ UserSchema.methods.verifyPassword = function(password, callback) {
     bcrypt.compare(password, this.get('hash'), callback);
 }
 
-UserSchema.statics.authenticate = function(username, password, callback) {
+UserSchema.statics.authenticate = function(email, password, callback) {
 
     this.findOne({
-        username: username
+        email: email
     }, function(err, user) {
         if (err) {
             console.error('Authenticate - get user error:', err);
@@ -95,8 +114,8 @@ UserSchema.statics.authenticate = function(username, password, callback) {
         }
 
         if (!user) {
-            console.error('Username is not registered:', username);
-            return callback(new Error('Username is not registered.'));
+            console.error('Email is not registered:', email);
+            return callback(new Error('Email is not registered.'));
         }
 
         user.verifyPassword(password, function(err, passwordCorrect) {
@@ -106,8 +125,8 @@ UserSchema.statics.authenticate = function(username, password, callback) {
             }
 
             if (!passwordCorrect) {
-                console.error('Invalid password:', username);
-                return callback(new Error('Invalid username or password.'));
+                console.error('Invalid password:', email);
+                return callback(new Error('Invalid email or password.'));
             }
 
             return callback(null, user);
@@ -119,6 +138,12 @@ UserSchema.statics.get = function(id, cb) {
     this.findById(id).exec(cb);
 }
 
+UserSchema.statics.findByEmail = function(email, cb) {
+    this.findOne({
+        email: email
+    }).exec(cb);
+}
+
 UserSchema.statics.list = function(options, cb) {
     options = options || {};
 
@@ -126,7 +151,7 @@ UserSchema.statics.list = function(options, cb) {
         .sort({
             'createdAt': -1
         })
-        .select({ salt: 0, hash: 0, password: 0 })
+        .select({ salt: 0, hash: 0, password: 0, ownedBy: 0 })
         .exec(cb);
 };
 
@@ -145,6 +170,7 @@ UserSchema.statics.changePassword = function(id, oldPassword, newPassword, callb
         }
 
         user.verifyPassword(oldPassword, function(err, passwordCorrect) {
+
             if (err) {
                 return callback(err);
             }
@@ -156,6 +182,7 @@ UserSchema.statics.changePassword = function(id, oldPassword, newPassword, callb
             user.set('password', newPassword);
 
             user.save(function(error, user) {
+
                 if (error) {
                     return cb(new Error('Error saving new password:' + error));
                 }

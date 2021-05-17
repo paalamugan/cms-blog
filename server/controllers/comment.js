@@ -3,7 +3,9 @@ const { ROLES, COMMENT_STATUS } = require("../common")
 
 exports.list = (req, res, next) => {
 
-    const options = {};
+    const options = {
+        user: req.user.ownedBy || req.user._id
+    };
 
     Comment.list(options, (err, comments) => {
 
@@ -34,7 +36,8 @@ exports.create = (req, res, next) => {
 
     let body = req.body;
     body.user = req.user._id;
-    body.status = req.user.role === ROLES.ADMIN ? COMMENT_STATUS.APPROVED : COMMENT_STATUS.PENDING;
+    // body.status = req.user.role === ROLES.ADMIN ? COMMENT_STATUS.APPROVED : COMMENT_STATUS.PENDING;
+    body.status = COMMENT_STATUS.APPROVED;
     
     Comment.create(body, (err, comment) => {
         

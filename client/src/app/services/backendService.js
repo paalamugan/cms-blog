@@ -74,6 +74,14 @@ class Service {
         return qs.stringify(data);
     }
 
+    queryParse(query) {
+
+        if (!query) return query;
+
+        query = query.replace(/^\?/, '');
+        return qs.parse(query);
+    }
+
     get(url, params) {
         return this.request.get(url, { params }).then(handleResponse).catch(handleError);
     }
