@@ -9,7 +9,7 @@ block preheader
 block content
     p Hello <b>#{username}</b>!
     p
-      | Welcome to #{app.title}!  Here is a special link to activate your new account:
+      | Welcome to <b>#{app.title}</b>! Here is a link to activate your new account:
     p
       a(href=`${app.domain}/verify/${token}`) Activate my account →
     p

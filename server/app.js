@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 
-const path  = require('path');
+const path = require('path');
 
 // Root path of the server
 global.rootPath = path.resolve(__dirname);
@@ -36,13 +36,10 @@ require('./express')(app, express, passport);
 process.on('unhandledRejection', error => {});
 
 // Set up our uncaught exception handler
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', (err) => {
     console.error('UncaughtException: ' + (new Date).toUTCString());
     console.error(err.stack);
-    setTimeout(function() {
-        // cleanup and exit...
-        process.exit(1);
-    }, 1000);
+    setTimeout(() => process.exit(1), 1000); // cleanup and exit...
 });
 
 app.listen(app.get('port'), () => {

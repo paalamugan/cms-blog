@@ -1,7 +1,7 @@
 const validator = require('validator');
 const passport = require('passport');
-const async    = require('async');
-const crypto   = require('crypto');
+const async = require('async');
+const crypto = require('crypto');
 const { User } = require('../models');
 const { COOKIE_TOKEN_NAME, ROLES } = require('../common');
 const { isAdminUser, getAdminUser } = require('./admin');
@@ -42,7 +42,7 @@ exports.getUser = (id, callback) => {
 
 }
 
-exports.createUser = function(data, callback) {
+exports.createUser = (data, callback) => {
 
     data = data || {};
 
@@ -61,12 +61,12 @@ exports.createUser = function(data, callback) {
     data.lastLogin = Date.now();
 
     isUserExists(data.email, (err) => {
-        
+
         if (err) {
             return callback(err);
         }
 
-        
+
         User.create(data, callback);
     });
 }
@@ -81,7 +81,7 @@ exports.forgotPassword = (req, res, cb) => {
 
     async.waterfall([
         // Check recaptcha code
-        function (callback) {
+        function(callback) {
             recaptcha.validate(captcha, callback);
         },
 
@@ -89,7 +89,7 @@ exports.forgotPassword = (req, res, cb) => {
             User.findOne({ email: email }, function(err, user) {
 
                 if (err || !user) {
-                    return callback(new Error("User with email '"+ email + "' does not exist."));
+                    return callback(new Error("User with email '" + email + "' does not exist."));
                 }
 
                 return callback(null, user);
@@ -98,19 +98,19 @@ exports.forgotPassword = (req, res, cb) => {
 
         function(user, callback) {
 
-            crypto.randomBytes(20, function(err, buffer) {
+            crypto.randomBytes(30, (err, buffer) => {
 
                 if (err) {
-                    return callback(new Error('Problem in getting password reset token. Try again.'));
+                    return callback(new Error('Problem in password reset token. Try again.'));
                 }
 
                 let token = buffer.toString('hex');
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 86400000; // 24 hour
 
-                user.save(function(err) {
+                user.save((err) => {
                     if (err) {
-                        return callback(new Error('Problem in getting password reset token. Try again.'));
+                        return callback(new Error('Problem in password reset token. Try again.'));
                     }
 
                     callback(err, user);
@@ -123,7 +123,7 @@ exports.forgotPassword = (req, res, cb) => {
     });
 }
 
-exports.resetPassword = function(req, res, callback) {
+exports.resetPassword = (req, res, callback) => {
 
     let password = req.body.password,
         passwordToken = req.body.passwordToken;
@@ -154,16 +154,12 @@ exports.resetPassword = function(req, res, callback) {
     });
 }
 
-exports.changePassword = function(req, res, callback) {
+exports.changePassword = (req, res, callback) => {
 
-    var currentPassword = req.body.currentPassword,
-        newPassword = req.body.newPassword;
+    let currentPassword = req.body.currentPassword;
+    let newPassword = req.body.newPassword;
 
-    User.changePassword(req.user._id,
-            currentPassword,
-            newPassword, function(err, user) {
-        callback(err, user);
-    });
+    User.changePassword(req.user._id, currentPassword, newPassword, callback);
 }
 
 exports.authenticateLocal = (req, res, next) => {
@@ -194,10 +190,9 @@ const oAuthCallback = (type) => {
 exports.authenticateGoogleCallback = oAuthCallback('google');
 exports.authenticateFacebookCallback = oAuthCallback('facebook');
 
-// GET /auth/logout
 exports.logout = (req, res) => {
 
-    var isCookieToken = !!(req.cookies[COOKIE_TOKEN_NAME]);
+    let isCookieToken = !!(req.cookies[COOKIE_TOKEN_NAME]);
     if (isCookieToken) {
         res.clearCookie(COOKIE_TOKEN_NAME);
     }

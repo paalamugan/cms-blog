@@ -9,7 +9,7 @@ block preheader
 block content
   p Hello <b>#{username}</b>!
   p
-    | Here is a special link that will allow you to reset your password.  Please note it will expire in one hour for your protection:
+    | Here is a link that will allow you to reset your password.  Please note it will expire in one day for your protection:
   p
     a(href=`${app.domain}/reset-password?email=${email}&token=${token}`) Reset Your Password
   p
