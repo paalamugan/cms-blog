@@ -1,6 +1,7 @@
-const authModule            = require('./auth-module');
-const admin                 = require('./admin');
-const { User }              = require('../models');
+const _          = require('lodash');
+const authModule = require('./auth-module');
+const admin      = require('./admin');
+const { User }   = require('../models');
 const { COOKIE_TOKEN_NAME, generateJwtToken, getSessionUser, ROLES } = require('../common');
 
 exports.authModule = authModule;
@@ -16,7 +17,7 @@ exports.isAuthenticated = (req, res, next) => {
     }
 
     let authorization = req.headers.authorization;
-   
+
     if (authorization) {
         return authModule.authenticateJwt(req, res, next);
     }
@@ -42,10 +43,10 @@ exports.authenticateJwtToken = (user) => {
 
     const auth_token = generateJwtToken(user);
 
-    return { 
-        user: getSessionUser(user), 
-        token: auth_token.token, 
-        expiresIn: auth_token.expiresIn 
+    return {
+        user: getSessionUser(user),
+        token: auth_token.token,
+        expiresIn: auth_token.expiresIn
     }
 }
 
@@ -53,7 +54,7 @@ exports.authenticateJwtToken = (user) => {
 exports.authenticateUser = (email, password, callback) => {
 
     let adminUser = admin.getAdminUser();
-    
+
     if (admin.isAdminUser(email)) {
 
         if (adminUser.password !== password) {
@@ -64,11 +65,11 @@ exports.authenticateUser = (email, password, callback) => {
     }
 
     User.authenticate(email, password, callback);
-    
+
 }
 
 exports.authenticateRole = (role) => {
-    
+
     return (req, res, next) => {
         if (req.user.role !== role) {
             let error = new Error("Only Admin can add, edit and delete operations!");
@@ -101,25 +102,28 @@ exports.passportOAuthCallback = (type) => {
 
     return (req, accessToken, refreshToken, profile, done) => {
 
-        let property = type + 'Id'; 
+        let property = type + 'Id';
 
         // google OAuth profile response
         // {
-        //     id: '1144767226546136',
+        //     id: '11447626546136',
         //     displayName: 'paal mugan',
         //     name: { familyName: 'mugan', givenName: 'paal' },
         //     photos: [
         //       {
-        //         value: 'https://lh3.googleusercontent.com/a-/AOh14GhkZYRhdUD1tFqWAT6qb6GU9gU--OBv68WlTH8u=s96-c'
+        //         value: 'https://lh3.googleusercontent.com/a-/AOh14GhkZYRhtFqWAT6qb6GU9gU--OBv68WlTH8u=s96-c'
         //       }
         //     ],
+        //     emails: [{
+        //          value: 'abc@gmail.com'
+        //     }]
         //     provider: 'google',
         //     _raw: '{\n' +
         //       '  "sub": "1144767226546136",\n' +
         //       '  "name": "paal mugan",\n' +
         //       '  "given_name": "paal",\n' +
         //       '  "family_name": "mugan",\n' +
-        //       '  "picture": "https://lh3.googleusercontent.com/a-/AOh14GhkZYRhdUD1tFqWAT6qb6GU9gU--OBv68WlTH8u\\u003ds96-c",\n' +
+        //       '  "picture": "https://lh3.googleusercontent.com/a-/AOh14GhkdUD1tFqWAT6qb6GU9gU--OBv68WlTH8u\\u003ds96-c",\n' +
         //       '  "locale": "en"\n' +
         //       '}',
         //     _json: {
@@ -127,14 +131,14 @@ exports.passportOAuthCallback = (type) => {
         //       name: 'paal mugan',
         //       given_name: 'paal',
         //       family_name: 'mugan'
-        //       picture: 'https://lh3.googleusercontent.com/a-/AOh14GhkZYRhdUD1tFqWAT6qb6GU9gU--OBv68WlTH8u=s96-c'
+        //       picture: 'https://lh3.googleusercontent.com/a-/AOh14GhkZYRh1tFqWAT6qb6GU9gU--OBv68WlTH8u=s96-c'
         //       locale: 'en'
         //     }
         // }
 
         // facebook OAuth profile response
         // {
-        //     id: '17881803320',
+        //     id: '1788181203320',
         //     username: undefined,
         //     displayName: 'Paalan',
         //     name: {
@@ -148,13 +152,15 @@ exports.passportOAuthCallback = (type) => {
         //     _raw: '{"name":"Paalan","id":"17881803320"}',
         //     _json: { name: 'Paalan', id: '17881803320' }
         // }
-          
-        User.findOne({ [property]: profile.id }, (err, user) => {
+
+        User.findOne({
+            [property]: profile.id
+        }, (err, user) => {
 
             if (err) return done(err);
 
             let obj = {
-                username: profile.displayName,
+                username: profile.displayName || '',
                 role: ROLES.ADMIN,
                 provider: type,
                 verified: true
@@ -162,18 +168,18 @@ exports.passportOAuthCallback = (type) => {
 
             if (type === "google") {
                 // obj.username = profile.displayName;
-                obj.email = profile.emails[0].value;
-                obj.avatarUrl = profile.photos[0].value
+                obj.email = profile.emails?.[0]?.value || _.kebabCase(obj.username) + '@gmail.com';
+                obj.avatarUrl = profile.photos?.[0]?.value;
             } else if (type === "facebook") {
                 // obj.username = profile.name.givenName + ' ' + profile.name.familyName;
-                obj.email = profile.emails[0].value;
+                obj.email = profile.emails?.[0]?.value || _.kebabCase(obj.username) + '@facebook.com';
                 obj.avatarUrl = profile.profileUrl;
             }
 
             if (user) {
 
-                if(!user[property]) {
-                    
+                if (!user[property]) {
+
                     user.username = obj.username;
                     user.email = obj.email;
                     user.role = obj.role;
@@ -198,6 +204,6 @@ exports.passportOAuthCallback = (type) => {
 
             newUser.save(done);
         });
-            
+
     }
 }
