@@ -1,11 +1,11 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { withRouter, Link } from "react-router-dom";
 import { Icon, IconButton, MenuItem } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { setLayoutSettings } from "app/redux/actions/LayoutActions";
 import { logoutSession } from "app/redux/actions/SessionActions";
-import PropTypes from "prop-types";
 import { BlogMenu } from "blog";
 import { isMdScreen, classList } from "utils";
 

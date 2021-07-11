@@ -1,5 +1,6 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
+import commonRoutes from "./views/common/CommonRoutes";
 import sessionRoutes from "./views/sessions/SessionRoutes";
 import postsRoutes from "./views/posts/PostsRoutes";
 import usersRoutes from "./views/users/UsersRoutes";
@@ -26,6 +27,7 @@ const errorRoute = [
 ];
 
 const routes = [
+  ...commonRoutes,
   ...sessionRoutes,
   ...usersRoutes, 
   ...postsRoutes,
