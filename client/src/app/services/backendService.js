@@ -10,31 +10,8 @@ const API_END_POINT = '/api';
 const AUTH_END_POINT = '/auth';
 
 const handleError = ({ response }) => {
-
     if (!response) return;
-
-    setTimeout(() => {
-
-        if (response.status === 401) { // "Unauthorized"
-            jwtAuthService.logout();
-            history.push({
-                pathname: '/login'
-            });
-
-        } else if (response.status === 403) { // Forbidden
-            history.push({
-                pathname: '/posts'
-            });
-        } else if (response.status === 404) { // "Not Found"
-            history.push({
-                pathname: '/404'
-            });
-        }
-    
-    }, 600);
-
     let message = isObjectLike(response.data) ? response.data.message : response.data;
-
     return { success: false, data: message };
 }
 
@@ -49,7 +26,13 @@ class Service {
         endPoint = endPoint || '/';
 
         this.request = axios.create({
-            baseURL: endPoint
+            baseURL: endPoint,
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                // timeout: 2000, // All request will wait 2 seconds before timeout,
+                // withCredentials: true
+            }
         });
 
         if (endPoint === API_END_POINT) {
@@ -67,6 +50,27 @@ class Service {
                 return config;
             });
 
+            this.request.interceptors.response.use(function (response) {
+                //Dispatch any action on success
+                return response;
+            }, function (error) {
+
+                if (error.response.status === 401) { // "Unauthorized"
+                    jwtAuthService.logout();
+                    history.push({
+                        pathname: '/login'
+                    });
+                } else if (error.response.status === 403) { // Forbidden
+                    history.push({
+                        pathname: '/posts'
+                    });
+                } else if (error.response.status === 404) { // "Not Found"
+                    history.push({
+                        pathname: '/404'
+                    });
+                }
+                return Promise.reject(error);
+              });
         }
     }
 
