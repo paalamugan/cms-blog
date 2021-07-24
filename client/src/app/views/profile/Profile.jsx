@@ -67,6 +67,10 @@ const Profile = ({ logoutSession, deleteUser }) => {
 
         api.put('users/me', state).then(({ success, data }) => {
   
+          if (!data) {
+            return logoutSession();
+          }
+
           if (!success) {
             return snackBarRef.current.open({ message: data });
           }

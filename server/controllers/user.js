@@ -19,7 +19,7 @@ exports.list = (req, res, next) => {
 
 exports.me = (req, res, next) => {
 
-    const id = req.user.id;
+    const id = req.user.id || req.user._id;
 
     if (!id) {
         return next(new Error("User Id is missing!"));
@@ -29,6 +29,10 @@ exports.me = (req, res, next) => {
 
         if (err) {
             return next(err);
+        }
+
+        if (!user) {
+            return next(new Error("User not found!"));
         }
 
         res.json(user);

@@ -14,6 +14,7 @@ const {
 const { User } = require('../models');
 const recaptcha = require('../helper/recaptcha');
 const email = require('../email');
+const { isDev } = require('../config');
 
 exports.register = (req, res, next) => {
 
@@ -64,7 +65,7 @@ exports.register = (req, res, next) => {
         // Assign role of user
         function (callback) {
             req.body.role = ROLES.ADMIN;
-            req.body.verified = false;
+            req.body.verified = isDev();
             req.body.verifyToken = generateHash(currentEmail);
             return callback(null);
         },
@@ -80,6 +81,10 @@ exports.register = (req, res, next) => {
         }
 
         let auth_token = authenticateJwtToken(result);
+
+        if (isDev()) {
+            return res.json(auth_token);
+        }
 
         let data = {
             username: result.username,
