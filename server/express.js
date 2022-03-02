@@ -52,7 +52,7 @@ module.exports = (app, express, passport) => {
     app.use(express.json());
 
     // Static files
-    app.use(express.static(buildPath), {
+    app.use(express.static(buildPath, {
         etag: true,
         maxAge: 12 * 60 * 60 * 1000, // use milliseconds for half day
         setHeaders: (res, path) => {
@@ -60,7 +60,7 @@ module.exports = (app, express, passport) => {
                 res.set('Cache-Control', 'public, max-age=3600'); // Available options for public, private, no-cache, no-store, must-revalidate, proxy-revalidate, max-age=<seconds>, s-maxage=<seconds>
             }
         }
-    });
+    }));
     app.use('/', (req, res) => {
         res.sendFile(path.join(buildPath, 'index.html'));
     });
