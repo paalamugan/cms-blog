@@ -134,11 +134,11 @@ class SignUp extends Component {
                     />
                     <FormControlLabel
                       className="mb-4"
-                      style={{ alignItems: "center" }}
+                      style={{ alignItems: "start" }}
                       name="agreement"
                       onChange={this.handleChange}
                       control={<Checkbox className="pt-0 pb-0" checked={agreement} />}
-                      label="I have read and agree to the terms of service."
+                      label={<span>By clicking submit you agree to our <a href="/privacy-policy" className="MuiButton-textPrimary" target="_blank">Privacy Policy</a> and <a href="/terms-and-conditions" className="MuiButton-textPrimary" target="_blank">Terms and Conditions</a>.</span>}
                     />
                     <ReCAPTCHA
                       className="mb-4 w-full"

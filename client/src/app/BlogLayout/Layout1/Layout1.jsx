@@ -7,6 +7,7 @@ import Scrollbar from "react-perfect-scrollbar";
 import { classList } from "utils";
 import { renderRoutes } from "react-router-config";
 import Layout1Topbar from "./Layout1Topbar";
+import Layout1TopbarLogo from "./Layout1TopbarLogo";
 import Layout1Sidenav from "./Layout1Sidenav";
 import Footer from "../SharedCompoents/Footer";
 import SecondarySidebar from "../SharedCompoents/SecondarySidebar/SecondarySidebar";
@@ -40,6 +41,11 @@ const Layout1 = props => {
         {layout1Settings.topbar.show && layout1Settings.topbar.fixed && (
           <ThemeProvider theme={topbarTheme}>
             <Layout1Topbar fixed={true} className="elevation-z8" />
+          </ThemeProvider>
+        )}
+        {layout1Settings.topbar.logo && (
+          <ThemeProvider theme={topbarTheme}>
+            <Layout1TopbarLogo fixed={layout1Settings.topbar.fixed || false} className="elevation-z8" />
           </ThemeProvider>
         )}
 

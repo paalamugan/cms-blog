@@ -42,7 +42,7 @@ const UserTable = ({ users, session, snackBarRef, addAndEditDialogRef, deleteUse
       <ConfirmationDialog 
       open={!!deleteSelectedId} 
       title="Delete Confirm" 
-      text="Are you sure you want to delete this post? This cannot be undone."
+      text="Are you sure you want to delete this user? This cannot be undone."
       onYesClick={onConfirmDelete}
       onConfirmDialogClose={() => setDeleteSelectedId(null)} />
       <Table className="whitespace-pre crud-table table-auto">

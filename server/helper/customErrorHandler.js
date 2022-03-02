@@ -41,7 +41,7 @@ exports.respondError = function (err, req, res, next) {
     if (accepted === 'json') {
         
         if (status === 401) {
-            // console.log('Logging out from page: ', req.originalUrl, req.user && req.user.username); // For debug
+            // console.log('Logging out: ', req.originalUrl, req.user && req.user.username); // For debug
             // console.log('Error Message: ', orgMsg); // For debug
             auth.logoutWithoutRedirect(req, res);
         }

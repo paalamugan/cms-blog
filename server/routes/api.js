@@ -29,7 +29,8 @@ const getCurrentSession = (req, res, next) => {
 // Session
 Router
     .get('/session', getCurrentSession)
-
+    .get('/users/me', User.me)
+    .put('/users/me', User.updateLoginUser)
 // Users
     .get('/users',  User.list)
     .post('/users', authenticateRole(ROLES.ADMIN), User.create)

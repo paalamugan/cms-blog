@@ -17,6 +17,65 @@ exports.list = (req, res, next) => {
     });
 }
 
+exports.me = (req, res, next) => {
+
+    const id = req.user.id || req.user._id;
+
+    if (!id) {
+        return next(new Error("User Id is missing!"));
+    }
+
+    User.findById(id, { email: 1, username: 1, role: 1, provider: 1 }, (err, user) => {
+
+        if (err) {
+            return next(err);
+        }
+
+        if (!user) {
+            return next(new Error("User not found!"));
+        }
+
+        res.json(user);
+    });
+}
+
+exports.updateLoginUser = (req, res, next) => {
+
+    const id = req.user._id || req.user.id;
+    const body = req.body;
+
+    if (!id) {
+        return next(new Error("User Id is missing!"));
+    }
+
+    User.findByIdAndUpdate(id, { ...body }, { new: true, projection: { email: 1, username: 1, role: 1, provider: 1 } }, (err, user) => {
+
+        if (err) {
+            return next(err);
+        }
+
+        if (!body.password) {
+            return res.json(user);
+        }
+
+        if (!body.newPassword) {
+            return next(new Error("New Password doesn't empty!"));
+        }
+
+        if (body.newPassword !== body.repeatNewPassword) {
+            return next(new Error("New Password doesn't match!"));
+        }
+
+        User.changePassword(id, body.password, body.newPassword, (err, user) => {
+            if (err) {
+                return next(err);
+            }
+            res.json(user);
+        })
+
+    });
+}
+
 exports.get = (req, res, next) => {
 
     const id = req.params.id;

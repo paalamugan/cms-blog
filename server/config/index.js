@@ -15,15 +15,15 @@ const config = {
 config.env = env;
 
 config.isDev = function () {
-    return (this.env === "development");
+    return (config.env === "development");
 }
 
 config.isProd = function () {
-    return (this.env === "production");
+    return (config.env === "production");
 }
 
 config.isAWS = function () {
-    return !!this.awsS3.accessKeyId;
+    return !!config.awsS3.accessKeyId;
 }
 
 if (config.isDev()) {
