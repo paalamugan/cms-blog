@@ -7,6 +7,7 @@ const errorHandler = require('errorhandler');
 const helmet = require('helmet');
 const multer = require('multer');
 const cors = require('cors');
+const compression = require('compression');
 const customErrorHandler = require('./helper/customErrorHandler');
 
 const buildPath = path.join(__dirname, '..', 'client', 'build');
@@ -77,7 +78,7 @@ module.exports = (app, express, passport) => {
           files: 1  // max number of file fields
         }
     }).single('image'));
-    
+
     app.use(cookieParser(app.config.cookieSecretKey));
     app.use(session({
         secret: app.config.sessionSecretKey,
