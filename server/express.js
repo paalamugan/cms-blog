@@ -14,12 +14,15 @@ const buildPath = path.join(__dirname, '..', 'client', 'build');
 module.exports = (app, express, passport) => {
 
     const { port, env } = app.config;
-    
+
     app.set('env', env);
     app.set('port', port);
     app.enable('trust proxy'); // trust proxy
     app.disable('x-powered-by');
     
+    // compress responses
+    app.use(compression());
+
     // Express use middlewares
     app.use(cors());
     
@@ -46,7 +49,21 @@ module.exports = (app, express, passport) => {
         extended: true
     }));
     app.use(express.json());
-    
+
+    // Static files
+    app.use(express.static(buildPath), {
+        etag: true,
+        maxAge: 12 * 60 * 60 * 1000, // use milliseconds for half day
+        setHeaders: (res, path) => {
+            if (path.indexOf('/static/') !== -1) {
+                res.set('Cache-Control', 'public, max-age=3600'); // Available options for public, private, no-cache, no-store, must-revalidate, proxy-revalidate, max-age=<seconds>, s-maxage=<seconds>
+            }
+        }
+    });
+    app.use('/', (req, res) => {
+        res.sendFile(path.join(buildPath, 'index.html'));
+    });
+
     app.use(multer({
         fileFilter: (req, file, cb) => {
             if (/^image\/(jpe?g|png|gif)$/i.test(file.mimetype)) {
@@ -60,11 +77,7 @@ module.exports = (app, express, passport) => {
           files: 1  // max number of file fields
         }
     }).single('image'));
-
-    // Static files
-    app.use(express.static(buildPath));
-    app.use('/', express.static(buildPath));
-
+    
     app.use(cookieParser(app.config.cookieSecretKey));
     app.use(session({
         secret: app.config.sessionSecretKey,

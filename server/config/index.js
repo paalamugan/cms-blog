@@ -4,9 +4,9 @@ const path = require("path");
 const util = require("util");
 
 const rootPath = path.normalize(__dirname + "/..");
-const env = process.env.NODE_ENV || "development";
+const env = (process.env.NODE_ENV || "development").trim();
 const defaultConfig = require('./default.config');
-const envConfig = require(__dirname + util.format("/%s.config.js", env))(rootPath);
+const envConfig = require(path.join(__dirname + util.format("/%s.config.js", env)))(rootPath);
 
 const config = { 
     ...defaultConfig, 
