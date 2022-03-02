@@ -61,9 +61,6 @@ module.exports = (app, express, passport) => {
             }
         }
     }));
-    app.use('/', (req, res) => {
-        res.sendFile(path.join(buildPath, 'index.html'));
-    });
 
     app.use(multer({
         fileFilter: (req, file, cb) => {
@@ -115,6 +112,10 @@ module.exports = (app, express, passport) => {
         app.use(helmet.frameguard('deny'));
         app.use(helmet.xssFilter());
     }
+    
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(buildPath, 'index.html'));
+    });
     
     // Routes
     require('./routes')(app);
