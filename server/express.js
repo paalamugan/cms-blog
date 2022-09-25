@@ -54,10 +54,10 @@ module.exports = (app, express, passport) => {
     // Static files
     app.use(express.static(buildPath, {
         etag: true,
-        // maxAge: 12 * 60 * 60 * 1000, // use milliseconds for half day
+        maxAge: 12 * 60 * 60 * 1000, // use milliseconds for half day
         setHeaders: (res, path) => {
             if (path.indexOf('/assets/') !== -1) {
-                res.set('Cache-Control', 'public, max-age=3600'); // Available options for public, private, no-cache, no-store, must-revalidate, proxy-revalidate, max-age=<seconds>, s-maxage=<seconds>
+                res.set('Cache-Control', 'public, max-age=360000'); // Available options for public, private, no-cache, no-store, must-revalidate, proxy-revalidate, max-age=<seconds>, s-maxage=<seconds>
             }
         }
     }));
