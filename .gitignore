@@ -107,3 +107,4 @@ locales/*
 
 #database storage data
 data/*
+.vercel

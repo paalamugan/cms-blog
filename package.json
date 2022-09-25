@@ -8,6 +8,7 @@
     "client": "cd client && yarn start",
     "build": "cd client && yarn build",
     "heroku-postbuild": "yarn client:install && yarn build",
+    "vercel-build": "yarn client:install && yarn build",
     "server": "cross-env NODE_ENV=development nodemon server/app.js",
     "prod": "NODE_ENV=production node server/app.js",
     "dev": "run-p server client",
