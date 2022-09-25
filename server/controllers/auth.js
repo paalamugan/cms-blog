@@ -79,11 +79,12 @@ exports.register = (req, res, next) => {
         if (err) {
             return next(err);
         }
-
-        let auth_token = authenticateJwtToken(result);
+        
+        let authData = authenticateJwtToken(result);
+        authData.verifyToken = result.verifyToken
 
         if (isDev()) {
-            return res.json(auth_token);
+            return res.json(authData);
         }
 
         let data = {
@@ -94,7 +95,7 @@ exports.register = (req, res, next) => {
 
         email.send('account-verify', { to: data.email }, data)
         .then(() => {
-            res.json(auth_token);
+            res.json(authData);
         }).catch(next);
     })
 }
@@ -123,9 +124,9 @@ exports.login = (req, res, next) => {
             user.save();
         }
 
-        let auth_token = authenticateJwtToken(user);
+        let authData = authenticateJwtToken(user);
 
-        res.json(auth_token);
+        res.json(authData);
     })
 
 }
@@ -221,8 +222,8 @@ exports.accountVerify = (req, res, next) => {
                 return next(err);
             }
 
-            let auth_token = authenticateJwtToken(user);
-            res.json(auth_token);
+            let authData = authenticateJwtToken(user);
+            res.json(authData);
 
         });
     });

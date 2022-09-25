@@ -105,7 +105,8 @@ export function registerUser({ username, email, password, captcha }) {
         refreshNavigationByUser(data.user)(dispatch, getState);
 
         history.push({
-          pathname: "/signup-confirmation"
+          pathname: "/signup-confirmation",
+          state: { verifyToken: data.verifyToken }
         });
 
         return dispatch({

@@ -22,11 +22,15 @@ const styles = theme => ({
   }
 });
 
+const verfiyLinkElement = () => {
+  return 
+}
 class SignUpConfirmation extends Component {
 
   snackbarRef = React.createRef();
 
   componentDidMount() {
+    console.log("hisytory", this.props.history);
     if (!this.props?.session?.email) {
       this.props.history.push('/login');
     } else if (this.props?.session?.verified) {
@@ -35,18 +39,24 @@ class SignUpConfirmation extends Component {
   }
 
   render() {
-    const { classes, session } = this.props;
+    const { classes, session, history } = this.props;
+    const verifyToken = history?.state?.verifyToken;
     return (
       <div className={`signup ${classes.flexCenter} ${classes.wrapper}`}>
         <BlogCustomizedSnackbar ref={this.snackbarRef} />
         <Paper className={`bg-white ${classes.flexCenter} ${classes.inner}`}>
           <div className="text-left mb-4">
             <h4 className="text-center">Confirm your email!</h4>
-            <p>Thanks for Signing Up. We’ve sent you an email to <strong>{ session.email }</strong></p>
-            <p>Please find the email and click the confirmation link to activate your account.</p>
+            <p>
+              Thanks for Signing Up. We've sent you an verify email to <strong>{ session.email }</strong>.&nbsp;
+              {!!verifyToken && <>or <Link to={`/verify/${verifyToken}`}>click here</Link> to activate your account.</>}
+            </p>
+            <p>
+              Please find the email and click the confirmation link to activate your account. 
+            </p>
             <Divider />
             <p className="text-muted">
-              If you do not receive an email in 5 minutes, please check your spam folder or email us at <em>paalamugan26@gmail.com</em>
+              If you do not receive an email in 5 minutes, please check your spam folder or email us at <em>contact@paalamugan.com</em>
             </p>
           </div>
           <Link to="/login">

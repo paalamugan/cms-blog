@@ -24,7 +24,7 @@ const email = new Email({
     },
     i18n: {},
     message: {
-        from: '"CMS-BLOG" <paalamugan26@gmail.com>'
+        from: '"CMS-BLOG" <hello@paalamugan.com>'
     },
     preview: false,
     send: true,
@@ -44,7 +44,7 @@ const defaultTemplateData = (data) => {
     data.app = {
         title: 'CMS-BLOG',
         domain: data.domain || config.domain,
-        contactEmail: 'paalamugan26@gmail.com',
+        contactEmail: 'contact@paalamugan.com',
         year: (new Date()).getFullYear()
     }
 

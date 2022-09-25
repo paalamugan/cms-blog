@@ -181,9 +181,9 @@ const PrivacyPolicy = () => (
       <p>We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the &quot;Last updated&quot; date at the top of this Privacy Policy.</p>
       <p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
       <h1>Contact Us</h1>
-      <p>If you have any questions about this Privacy Policy, You can contact us:</p>
+      <p>If you have any questions about this Privacy Policy, You can contact me:</p>
       <ul>
-      <li>By email: paalamugan26@gmail.com</li>
+      <li>By email: contact@paalamugan.com</li>
       </ul>
       </Container>
   </Fragment>
