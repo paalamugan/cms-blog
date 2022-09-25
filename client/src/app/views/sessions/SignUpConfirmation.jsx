@@ -40,7 +40,7 @@ class SignUpConfirmation extends Component {
 
   render() {
     const { classes, session, history } = this.props;
-    const verifyToken = history?.state?.verifyToken;
+    const verifyToken = history?.location?.state?.verifyToken;
     return (
       <div className={`signup ${classes.flexCenter} ${classes.wrapper}`}>
         <BlogCustomizedSnackbar ref={this.snackbarRef} />
