@@ -2,11 +2,6 @@
 
 require('dotenv').config();
 
-const path = require('path');
-
-// Root path of the server
-global.rootPath = path.resolve(__dirname);
-
 const express = require('express');
 const passport = require('passport');
 

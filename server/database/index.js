@@ -2,7 +2,7 @@
 
 const mongoose         = require("mongoose");
 const bluebird         = require('bluebird');
-const { mongodb }      = require(global.rootPath + '/config');
+const { mongodb }      = require('../config');
 
 const connect = () => {
     const options = {

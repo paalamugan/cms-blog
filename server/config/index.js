@@ -3,10 +3,14 @@
 const path = require("path");
 const util = require("util");
 
-const rootPath = path.normalize(__dirname + "/..");
+const rootPath = path.normalize(__dirname + "/.."); 
+console.log("rootPath", rootPath);
+const productionEnv = require("./production.config")(rootPath);
+const developmentEnv = require("./development.config")(rootPath);
 const env = (process.env.NODE_ENV || "development").trim();
 const defaultConfig = require('./default.config');
-const envConfig = require(path.join(__dirname + util.format("/%s.config.js", env)))(rootPath);
+const envConfig = env === "production" ? productionEnv : developmentEnv; 
+//require(path.join(__dirname + util.format("/%s.config.js", env)))(rootPath);
 
 const config = { 
     ...defaultConfig, 

@@ -10,7 +10,7 @@ const { COMMENT_STATUS } = require('../common');
 const { CATEGORIES, 
         VISIBILITY, 
         POST_STATUS,
-        sanitizeHtml } = require(global.rootPath + '/common');
+        sanitizeHtml } = require('../common');
 
 const schemaOptions = {
     toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
