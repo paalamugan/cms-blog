@@ -8,14 +8,14 @@ const BlogNoData = ({ children, className, message }) => {
       spacing={0}
       direction="column"
       alignItems="center"
-      justify="center"
+      justifyContent="center"
       className={`mt-25${className ? (' ' + className) : ' '}`}
     >
 
       <Grid item xs={10} sm={8} md={6} lg={4} xl={3}>
         <Card className="my-10">
           <Card elevation={0} className="upgrade-card bg-light-primary p-sm-24">
-            <img src="/assets/images/illustrations/no-data.svg" alt="no-data" />
+            <img src="/assets/images/illustrations/no-data.png" alt="no-data" />
             {children ? children : (
               <h4 className="mt-10">{ message || 'No result found.'}</h4>
             )}
