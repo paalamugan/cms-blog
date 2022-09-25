@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Card, Grid } from "@material-ui/core";
 
 const BlogNoData = ({ children, className, message }) => {
