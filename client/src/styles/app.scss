@@ -29,3 +29,10 @@ code {
 @import "layouts";
 @import "views";
 @import "mui-override";
+
+a[href] {
+  color: #0872b3;
+  &:hover {
+    text-decoration: underline;
+  }
+}

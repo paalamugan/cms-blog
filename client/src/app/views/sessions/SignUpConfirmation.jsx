@@ -17,20 +17,19 @@ const styles = theme => ({
   },
   inner: {
     flexDirection: "column",
-    maxWidth: "600px",
+    maxWidth: "635px",
     padding: theme.spacing(4)
+  },
+  paragraph: {
+    lineHeight: 1.6
   }
 });
 
-const verfiyLinkElement = () => {
-  return 
-}
 class SignUpConfirmation extends Component {
 
   snackbarRef = React.createRef();
 
   componentDidMount() {
-    console.log("hisytory", this.props.history);
     if (!this.props?.session?.email) {
       this.props.history.push('/login');
     } else if (this.props?.session?.verified) {
@@ -47,9 +46,9 @@ class SignUpConfirmation extends Component {
         <Paper className={`bg-white ${classes.flexCenter} ${classes.inner}`}>
           <div className="text-left mb-4">
             <h4 className="text-center">Confirm your email!</h4>
-            <p>
+            <p className={classes.paragraph}>
               Thanks for Signing Up. We've sent you an verify email to <strong>{ session.email }</strong>.&nbsp;
-              {!!verifyToken && <>or <Link to={`/verify/${verifyToken}`}>click here</Link> to activate your account.</>}
+              {!!verifyToken && <>or <strong><Link to={`/verify/${verifyToken}`}>click here</Link></strong> to activate your account.</>}
             </p>
             <p>
               Please find the email and click the confirmation link to activate your account. 
