@@ -7,6 +7,7 @@ import { refreshNavigationByUser } from "../redux/actions/NavigationAction";
 import jwtAuthService from "../services/jwtAuthService";
 import localStorageService from "../services/localStorageService";
 import history from "history.js";
+import { unAuthRoutes } from "app/constant";
 
 const checkJwtAuth = async (setSessionData, refreshNavigationByUser) => {
   // You need to send token to our server to check token is valid
@@ -38,25 +39,18 @@ const AuthorizedComponent = ({
   setSessionData,
   refreshNavigationByUser,
 }) => {
-  const isLoggedIn = jwtAuthService.isLoggedIn();
+  let pathname = history.location.pathname;
+  let isunAuthRoutes = !!unAuthRoutes.find((route) => pathname.includes(route));
+
   useEffect(() => {
-    if (isLoggedIn) {
-      setSessionData(localStorageService.getUser());
-      checkJwtAuth(setSessionData, refreshNavigationByUser);
-    }
-  }, [isLoggedIn, setSessionData, refreshNavigationByUser]);
+    if (isunAuthRoutes) return;
+    setSessionData(localStorageService.getUser());
+    checkJwtAuth(setSessionData, refreshNavigationByUser);
+  }, [setSessionData, refreshNavigationByUser]);
   return children;
 };
 
 const Auth = ({ children, setSessionData, refreshNavigationByUser }) => {
-  // let pathname = history.location.pathname;
-
-  // let isUnAuthRoutes = !!unAuthRoutes.find((route) => pathname.includes(route));
-
-  // if (isUnAuthRoutes) {
-  //   return renderRoutes([...sessionRoutes,  ...commonRoutes]);
-  // }
-
   return (
     <AuthorizedComponent
       setSessionData={setSessionData}
