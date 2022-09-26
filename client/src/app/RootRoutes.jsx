@@ -22,7 +22,7 @@ const redirectRoute = [
   {
     path: "/#",
     exact: true,
-    component: RedirectComponent,
+    component: () => <Redirect to="/posts" />,
   },
 ];
 
