@@ -32,23 +32,22 @@ const List  = ({ getAllPost, deletePost, post, session, location: { pathname } }
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    let isMounted = true;
+  
+    if (session.verified) {
+
       setLoading(true);
       getAllPost().then(({ success, data }) => {
-        
-        if (!isMounted) return;
 
-        if (!success && snackBarRef.current) {
-          return snackBarRef.current.open({ message: data });
+        if (!success) {
+          snackBarRef.current.open({ message: data });
         }
 
         setLoading(false);
 
       });
-      return () => {
-        isMounted = false;
-      }
-  }, [refresh]);
+    }
+
+  }, [refresh, session.verified]);
   
   const onConfirmDelete = useCallback(() => {
     deletePost(deleteSelectedId).then(({ success, data }) => {

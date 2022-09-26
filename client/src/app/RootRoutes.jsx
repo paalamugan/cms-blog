@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import commonRoutes from "./views/common/CommonRoutes";
 import postsRoutes from "./views/posts/PostsRoutes";
 import usersRoutes from "./views/users/UsersRoutes";
 import commentsRoutes from "./views/comments/CommentsRoutes";
 import profileRoutes from "./views/profile/ProfileRoutes";
-import jwtAuthService from "./services/jwtAuthService";
 import sessionRoutes from "./views/sessions/SessionRoutes";
+import history from "history.js";
 
 const RedirectComponent = () => {
-  console.log("Asasasas");
-  if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />;
-  return <Redirect to="/posts" />;
+  useEffect(() => {
+    history.push({
+      pathname: "/posts"
+    })
+  }, []);
+  return null;
 };
 
 const redirectRoute = [
@@ -19,11 +22,6 @@ const redirectRoute = [
     path: "/",
     exact: true,
     component: RedirectComponent,
-  },
-  {
-    path: "/#_=_",
-    exact: true,
-    component: () => <Redirect to="/posts" />,
   },
 ];
 
