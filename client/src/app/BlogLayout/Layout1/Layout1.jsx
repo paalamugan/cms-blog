@@ -57,7 +57,9 @@ const Layout1 = props => {
               </ThemeProvider>
             )}
             <div className="content">
-              <BlogSuspense>{renderRoutes(routes)}</BlogSuspense>
+              <BlogSuspense>
+                {renderRoutes(routes)}
+              </BlogSuspense>
             </div>
             <div className="my-auto" />
             {settings.footer.show && !settings.footer.fixed && <Footer />}

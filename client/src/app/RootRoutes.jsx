@@ -9,33 +9,33 @@ import jwtAuthService from "./services/jwtAuthService";
 import sessionRoutes from "./views/sessions/SessionRoutes";
 
 const RedirectComponent = () => {
-  if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />
-  return <Redirect to="/posts" />
-}
+  if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />;
+  return <Redirect to="/posts" />;
+};
 
 const redirectRoute = [
   {
     path: "/",
     exact: true,
-    component: RedirectComponent 
+    component: RedirectComponent,
   },
   {
     path: "/#",
     exact: true,
-    component: RedirectComponent
-  }
+    component: RedirectComponent,
+  },
 ];
 
 const errorRoute = [
   {
-    component: () => <Redirect to="/404" />
-  }
+    component: () => <Redirect to="/404" />,
+  },
 ];
 
 const routes = [
   ...commonRoutes,
   ...sessionRoutes,
-  ...usersRoutes, 
+  ...usersRoutes,
   ...postsRoutes,
   ...commentsRoutes,
   ...profileRoutes,
