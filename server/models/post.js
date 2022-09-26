@@ -46,7 +46,7 @@ const PostSchema = new Schema({
 
     defaultImageUrl: {
         type: String,
-        default: "/assets/images/default-post.jpg"
+        default: "https://via.placeholder.com/500x180"
     },
 
     isMarkdownContent: {
