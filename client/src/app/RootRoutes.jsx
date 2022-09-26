@@ -1,12 +1,12 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import commonRoutes from "./views/common/CommonRoutes";
-import sessionRoutes from "./views/sessions/SessionRoutes";
 import postsRoutes from "./views/posts/PostsRoutes";
 import usersRoutes from "./views/users/UsersRoutes";
 import commentsRoutes from "./views/comments/CommentsRoutes";
 import profileRoutes from "./views/profile/ProfileRoutes";
 import jwtAuthService from "./services/jwtAuthService";
+import sessionRoutes from "./views/sessions/SessionRoutes";
 
 const RedirectComponent = () => {
   if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />

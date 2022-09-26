@@ -1,6 +1,6 @@
 import layout1Settings from "./Layout1/Layout1Settings";
 import { themeColors } from "./BlogTheme/themeColors";
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 import { forEach, merge } from "lodash";
 import themeOptions from "./BlogTheme/themeOptions";
 
@@ -8,7 +8,7 @@ function createBlogThemes() {
   let themes = {};
 
   forEach(themeColors, (value, key) => {
-    themes[key] = createMuiTheme(merge({}, themeOptions, value));
+    themes[key] = createTheme(merge({}, themeOptions, value));
   });
   return themes;
 }

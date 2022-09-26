@@ -77,7 +77,7 @@ class LogIn extends Component {
   state = {
     email: "",
     password: "",
-    remember: true
+    remember: false
   };
 
   snackbarRef = React.createRef();
@@ -174,7 +174,7 @@ class LogIn extends Component {
                       validators={["required"]}
                       errorMessages={["Password field is required"]}
                     />
-                    <Grid container direction="row" justify="space-between" alignItems="stretch" className="mb-1">
+                    <Grid container direction="row" justifyContent="space-between" alignItems="stretch" className="mb-1">
                       <Grid item xs style={{ alignSelf: "center" }}>
                         <FormControlLabel
                           style={{ alignItems: "center" }}

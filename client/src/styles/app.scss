@@ -30,13 +30,6 @@ code {
 @import "views";
 @import "mui-override";
 
-a[href] {
-  color: #0872b3;
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
 .display-none {
   display: none;
 }

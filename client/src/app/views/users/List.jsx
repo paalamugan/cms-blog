@@ -31,7 +31,7 @@ const UserLists = ({ addAndEditUser, users, session, getAllUser }) => {
       setLoading(true);
       getAllUser().then(({ success, data }) => {
 
-        if (!success) {
+        if (!success && snackBarRef.current) {
           snackBarRef.current.open({ message: data });
         }
 

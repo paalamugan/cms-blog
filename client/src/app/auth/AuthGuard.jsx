@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from "react";
+import React, { Fragment, useState, useEffect, useContext, useMemo } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import AppContext from "app/appContext";
@@ -25,9 +25,12 @@ const getAuthStatus = (props, routes) => {
   return authenticated;
 };
 
-const AuthGuard = ({ children, ...props }) => {
+const AuthGuard = ({ children, location, session }) => {
   const { routes } = useContext(AppContext);
-  
+  const props = useMemo(() => ({
+    location,
+    session
+  }), [location, session])
   let [authenticated, setAuthenticated] = useState(
     getAuthStatus(props, routes)
   );
@@ -36,8 +39,11 @@ const AuthGuard = ({ children, ...props }) => {
     if (!authenticated) {
       redirectRoute(props);
     }
+  }, [authenticated, props]);
+  
+  useEffect(() => {
     setAuthenticated(getAuthStatus(props, routes));
-  }, [setAuthenticated, authenticated, routes, props]);
+  }, [setAuthenticated, routes, props]);
 
   return authenticated ? <Fragment>{children}</Fragment> : null;
 };
