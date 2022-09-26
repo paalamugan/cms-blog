@@ -9,6 +9,7 @@ import jwtAuthService from "./services/jwtAuthService";
 import sessionRoutes from "./views/sessions/SessionRoutes";
 
 const RedirectComponent = () => {
+  console.log("Asasasas");
   if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />;
   return <Redirect to="/posts" />;
 };
