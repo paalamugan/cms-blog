@@ -8,6 +8,7 @@ import jwtAuthService from "../services/jwtAuthService";
 import localStorageService from "../services/localStorageService";
 import history from "history.js";
 import { unAuthRoutes } from "app/constant";
+import { Redirect } from "react-router-dom";
 
 const checkJwtAuth = async (setSessionData, refreshNavigationByUser) => {
   // You need to send token to our server to check token is valid
@@ -46,20 +47,20 @@ const checkJwtAuth = async (setSessionData, refreshNavigationByUser) => {
 
 };
 
-const Auth = ({ children, setSessionData, refreshNavigationByUser }) => {
+const Auth = ({ children, session, setSessionData, refreshNavigationByUser }) => {
   setSessionData(localStorageService.getUser());
 
   useEffect(() => {
     checkJwtAuth(setSessionData, refreshNavigationByUser);
   }, [setSessionData, refreshNavigationByUser]);
 
-  return <Fragment>{children}</Fragment>;
+  return jwtAuthService.isLoggedIn() ? children : <Redirect to="/login" />
 };
 
 const mapStateToProps = state => ({
   setSessionData: PropTypes.func.isRequired,
   refreshNavigationByUser: PropTypes.func.isRequired,
-  login: state.login
+  session: state.session,
 });
 
 export default connect(mapStateToProps, { setSessionData, refreshNavigationByUser })(

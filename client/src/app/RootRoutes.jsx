@@ -7,10 +7,6 @@ import usersRoutes from "./views/users/UsersRoutes";
 import commentsRoutes from "./views/comments/CommentsRoutes";
 import profileRoutes from "./views/profile/ProfileRoutes";
 import jwtAuthService from "./services/jwtAuthService";
-console.log("jwtAuthService", jwtAuthService);
-if (typeof window !== "undefined") {
-  window.jwtAuthService = jwtAuthService;
-}
 
 const RedirectComponent = () => {
   if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />
