@@ -47,7 +47,7 @@ const checkJwtAuth = async (setSessionData, refreshNavigationByUser) => {
 
 };
 
-const Auth = ({ children, session, setSessionData, refreshNavigationByUser }) => {
+const Auth = ({ children, setSessionData, refreshNavigationByUser }) => {
   setSessionData(localStorageService.getUser());
 
   useEffect(() => {
@@ -60,7 +60,6 @@ const Auth = ({ children, session, setSessionData, refreshNavigationByUser }) =>
 const mapStateToProps = state => ({
   setSessionData: PropTypes.func.isRequired,
   refreshNavigationByUser: PropTypes.func.isRequired,
-  session: state.session,
 });
 
 export default connect(mapStateToProps, { setSessionData, refreshNavigationByUser })(
