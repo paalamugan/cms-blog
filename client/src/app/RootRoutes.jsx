@@ -20,7 +20,7 @@ const redirectRoute = [
     component: RedirectComponent,
   },
   {
-    path: "/#",
+    path: "/#_=_",
     exact: true,
     component: () => <Redirect to="/posts" />,
   },
