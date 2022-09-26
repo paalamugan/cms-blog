@@ -10,8 +10,8 @@ import history from "history.js";
 import { unAuthRoutes } from "app/constant";
 
 const checkJwtAuth = async (setSessionData, refreshNavigationByUser) => {
-  // You need to send token to your server to check token is valid
-  // modify loginWithToken method in jwtService
+  // You need to send token to our server to check token is valid
+  // modify getUserSession method in jwtService
   let pathname = history.location.pathname;
 
   let isUnAuthRoutes = !!unAuthRoutes.find((route) => pathname.includes(route));
@@ -20,7 +20,7 @@ const checkJwtAuth = async (setSessionData, refreshNavigationByUser) => {
     return null;
   }
   
-  let session = await jwtAuthService.loginWithToken();
+  let session = await jwtAuthService.getUserSession();
 
   if (session) {
 

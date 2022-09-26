@@ -6,17 +6,27 @@ import postsRoutes from "./views/posts/PostsRoutes";
 import usersRoutes from "./views/users/UsersRoutes";
 import commentsRoutes from "./views/comments/CommentsRoutes";
 import profileRoutes from "./views/profile/ProfileRoutes";
+import jwtAuthService from "./services/jwtAuthService";
+console.log("jwtAuthService", jwtAuthService);
+if (typeof window !== "undefined") {
+  window.jwtAuthService = jwtAuthService;
+}
+
+const RedirectComponent = () => {
+  if (!jwtAuthService.isLoggedIn()) return <Redirect to="/login" />
+  return <Redirect to="/posts" />
+}
 
 const redirectRoute = [
   {
     path: "/",
     exact: true,
-    component: () => <Redirect to="/posts" />
+    component: RedirectComponent 
   },
   {
     path: "/#",
     exact: true,
-    component: () => <Redirect to="/posts" />
+    component: RedirectComponent
   }
 ];
 

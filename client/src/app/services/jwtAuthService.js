@@ -19,8 +19,8 @@ const logInSuccess = function(res) {
 
 class JwtAuthService {
 
-  // You need to send http request with email and passsword to your server in this method
-  // Your server will return user object & a Token
+  // You need to send http request with email and passsword to our server in this method
+  // our server will return user object & a Token
   // User should have role property
   // You can define roles in app/auth/authRoles.js
   loginWithEmailAndPassword = (email, password) => {
@@ -31,9 +31,9 @@ class JwtAuthService {
     return auth.post('signup', { username, email, password, captcha }).then(logInSuccess.bind(this));
   }
 
-  // You need to send http requst with existing token to your server to check token is valid
+  // You need to send http requst with existing token to our server to check token is valid
   // This method is being used when user logged in & app is reloaded
-  loginWithToken = () => {
+  getUserSession = () => {
 
     // if (this.isLoggedOut()) {
     //   return null;
