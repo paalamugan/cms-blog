@@ -35,7 +35,7 @@ const TermsAndConditions = () => (
       <p><strong>Third-party Social Media Service</strong> means any services or content (including data, information, products or services) provided by a third-party that may be displayed, included or made available by the Service.</p>
       </li>
       <li>
-      <p><strong>Website</strong> refers to CMS Blog Post, accessible from <a href="https://cms-blog-post.herokuapp.com/" rel="external nofollow noopener noreferrer" target="_blank">https://cms-blog-post.herokuapp.com/</a></p>
+      <p><strong>Website</strong> refers to CMS Blog Post, accessible from <a href="https://cms-blog.paalamugan.com/" rel="external nofollow noopener noreferrer" target="_blank">https://cms-blog.paalamugan.com/</a></p>
       </li>
       <li>
       <p><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</p>
