@@ -9,7 +9,7 @@ import {
   Hidden,
   CircularProgress
 } from "@material-ui/core";
-import FacebookIcon from '@material-ui/icons/Facebook';
+// import FacebookIcon from '@material-ui/icons/Facebook';
 import { withStyles } from "@material-ui/core/styles";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { connect } from "react-redux";
