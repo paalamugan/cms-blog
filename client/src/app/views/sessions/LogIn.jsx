@@ -132,7 +132,7 @@ class LogIn extends Component {
                     </Button>
                   </a>
 
-                  <a href="/auth/facebook">
+                  {/* <a href="/auth/facebook">
                     <Button 
                       variant="contained"
                       color="primary"
@@ -142,7 +142,7 @@ class LogIn extends Component {
                       >
                         Sign In With Facebook
                     </Button>
-                  </a>
+                  </a> */}
                 </div>
                 <div className="mt-6 px-8">
                   <div className={classes.or}>
